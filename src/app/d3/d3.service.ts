@@ -48,7 +48,6 @@ export class D3Service {
         if (!d3.event.active) {
           graph.simulation.alphaTarget(0);
         }
-
         node.fx = null;
         node.fy = null;
       }
@@ -62,7 +61,6 @@ export class D3Service {
   * This method does not interact with the document, purely physical calculations with d3
   */
   getForceDirectedGraph(nodes: Node[], links: Link[], options: { width, height }, ) {
-  
     const sg = new ForceDirectedGraph(nodes, links, options);
     return sg;
   }

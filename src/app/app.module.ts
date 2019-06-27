@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GraphComponent } from './visuals/graph/graph.component';
@@ -11,6 +10,9 @@ import { ZoomableDirective } from './d3/directives/zoomable.directive';
 import { D3Service } from './d3/d3.service';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+
+
 
 
 @NgModule({
@@ -27,8 +29,8 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule,
     HttpClientModule,
+    FormsModule,
     AngularSvgIconModule 
     
   ],

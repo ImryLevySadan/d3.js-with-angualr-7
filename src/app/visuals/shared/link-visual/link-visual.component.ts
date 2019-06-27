@@ -11,9 +11,11 @@ import { Link } from 'src/app/d3/models';
         [attr.x2]="link.target.x"
         [attr.y2]="link.target.y"
     ></svg:line>
+
   `,
   styleUrls: ['./link-visual.component.css']
 })
 export class LinkVisualComponent  {
   @Input('linkVisual') link: Link;
+
 }
