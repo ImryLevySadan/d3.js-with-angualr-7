@@ -1,5 +1,5 @@
-import { Node } from '../d3/models';
-import { Link } from '../d3/models';
+import { Node } from '../../simulation-layout/d3/models';
+import { Link } from '../../simulation-layout/d3/models';
 
 export const NODES: Node[] = [
 

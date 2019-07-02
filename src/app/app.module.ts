@@ -2,15 +2,20 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { GraphComponent } from './visuals/graph/graph.component';
-import { NodeVisualComponent } from './visuals/shared/node-visual/node-visual.component';
-import { LinkVisualComponent } from './visuals/shared/link-visual/link-visual.component';
-import { DraggableDirective } from './d3/directives/draggable.directive';
-import { ZoomableDirective } from './d3/directives/zoomable.directive';
-import { D3Service } from './d3/d3.service';
+import { GraphComponent } from './simulation-layout/visuals/graph/graph.component';
+import { NodeVisualComponent } from './simulation-layout/visuals/shared/node-visual/node-visual.component';
+import { LinkVisualComponent } from './simulation-layout/visuals/shared/link-visual/link-visual.component';
+import { DraggableDirective } from './simulation-layout/d3/directives/draggable.directive';
+import { ZoomableDirective } from './simulation-layout/d3/directives/zoomable.directive';
+import { D3Service } from './simulation-layout/d3/d3.service';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { LineChartComponent } from './tree-layouts/line-chart/line-chart.component';
+import { TidyTreeComponent } from './tree-layouts/tidy-tree/tidy-tree.component';
+import { ForceDirectedGraphComponent } from './tree-layouts/force-directed-graph/force-directed-graph.component';
+import { CollapsibleTreeLayoutComponent } from './tree-layouts/collapsible-tree-layout/collapsible-tree-layout.component';
+
 
 
 
@@ -24,6 +29,10 @@ import { FormsModule } from '@angular/forms';
     LinkVisualComponent,
     DraggableDirective,
     ZoomableDirective,
+    LineChartComponent,
+    TidyTreeComponent,
+    ForceDirectedGraphComponent,
+    CollapsibleTreeLayoutComponent
     
   ],
   imports: [

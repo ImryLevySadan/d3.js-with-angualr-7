@@ -9,4 +9,7 @@
 </form>
 
 
-<graph [nodes]="netWorkType.nodes" [links]="netWorkType.links"></graph>
+<graph [nodes]="netWorkType.nodes" [links]="netWorkType.links" *ngIf="simulation"></graph>
+<app-tidy-tree *ngIf="tidy"></app-tidy-tree>
+<app-force-directed-graph *ngIf="forceDirected"></app-force-directed-graph>
+<app-collapsible-tree-layout *ngIf="collapsiable"></app-collapsible-tree-layout>
