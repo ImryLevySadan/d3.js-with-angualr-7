@@ -15,9 +15,8 @@ import { LineChartComponent } from './tree-layouts/line-chart/line-chart.compone
 import { TidyTreeComponent } from './tree-layouts/tidy-tree/tidy-tree.component';
 import { ForceDirectedGraphComponent } from './tree-layouts/force-directed-graph/force-directed-graph.component';
 import { CollapsibleTreeLayoutComponent } from './tree-layouts/collapsible-tree-layout/collapsible-tree-layout.component';
-
-
-
+import { ForceDirctedTreeComponent } from './tree-layouts/force-dircted-tree/force-dircted-tree.component';
+import { CollapsibleForceComponent } from './tree-layouts/collapsible-force/collapsible-force.component';
 
 
 @NgModule({
@@ -32,8 +31,9 @@ import { CollapsibleTreeLayoutComponent } from './tree-layouts/collapsible-tree-
     LineChartComponent,
     TidyTreeComponent,
     ForceDirectedGraphComponent,
-    CollapsibleTreeLayoutComponent
-    
+    CollapsibleTreeLayoutComponent,
+    ForceDirctedTreeComponent,
+    CollapsibleForceComponent        
   ],
   imports: [
     BrowserModule,

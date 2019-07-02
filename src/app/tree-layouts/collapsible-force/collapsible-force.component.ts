@@ -1,16 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import * as d3 from 'd3';
+import { forceLink } from 'd3';
 
 @Component({
-  selector: 'app-force-directed-graph',
-  templateUrl: './force-directed-graph.component.html',
-  styleUrls: ['./force-directed-graph.component.css']
+  selector: 'app-collapsible-force',
+  templateUrl: './collapsible-force.component.html',
+  styleUrls: ['./collapsible-force.component.css']
 })
-export class ForceDirectedGraphComponent implements OnInit {
-  d3:d3.Simulation<any, any>;
-      
-constructor() {}
-   
+export class CollapsibleForceComponent implements OnInit {
+d3: d3.TreeLayout<any>;
+simulation: any;
+svg:any;
+root:any;
+node: any;
+link: any;
+width: number = window.innerWidth;
+height:number = window.innerHeight;
+
+
   ngOnInit() {
     const data = {
       "nodes": [
@@ -349,79 +356,195 @@ constructor() {}
         {"source": "Mme.Hucheloup", "target": "Enjolras", "value": 1}
       ]
     }
-    const links = data.links;
-    const nodes = data.nodes;
-    let width = window.innerWidth;
-    let height = window.innerHeight;
+    this.root = d3.hierarchy(data);
+    this.root['fixed'] = true;
+    this.root['px'] = this.root['py'] = 0;
     
-    const simulation = d3.forceSimulation(<any>nodes)
-        .force("link", d3.forceLink(links).id(d => d['id']))
-        .force("charge", d3.forceManyBody())
-        .force("center", d3.forceCenter(width / 2, height / 2));
-  
-    const svg = d3.select("#container").append("svg")
-        .attr("viewBox", <any>[0, 0, width, height]);
-  
-    const link = svg.append("g")
-        .attr("stroke", "#999")
-        .attr("stroke-opacity", 0.6)
-      .selectAll("line")
-      .data(links)
-      .join("line")
-        .attr("stroke-width", d => Math.sqrt(d.value));
-  
-    let node = svg.append("g")
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 1.5)
-      .selectAll("circle")
-      .data(nodes)
-      .join("circle")
-        .attr("r", 5)
-        .attr("fill", <any>this.initColor())
-        .call(<any>this.drag(simulation));
+   
+    this.simulation = d3.forceSimulation(<any>data.nodes)
+    .force("charge", d =>  d['_children']? -d['size'] / 100 : d['children'] ? -100 : -30)
+    .force("link", forceLink().distance(d=> d.target['._children'] ? 50 : 30));
 
+    this.simulation.on("tick", <any>this.tick());
+
+
+  this.svg = d3.select("#container").append("svg")
+    .attr("width", this.width)
+    .attr("height", this.height);
+
+  this.update();
+
+  }
+    update(){
+      let nodes = this.flatten(this.root['nodes']);
+      let links = this.flatten(this.root['links']);
       
-        simulation.on("tick", () => {
-          link
-              .attr("x1", d => d.source['x'])
-              .attr("y1", d => d.source['y'])
-              .attr("x2", d => d.target['x'])
-              .attr("y2", d => d.target['y']);
-      
-          node
-              .attr("cx", d => d['x'])
-              .attr("cy", d => d['y']);
-        });
-      
+
+  // make sure we set .px/.py as well as node.fixed will use those .px/.py to 'stick' the node to:
+  if (!this.root.px) {
+    // root have not be set / dragged / moved: set initial root position
+    this.root.px = this.root.x = this.width / 2;
+    this.root.py = this.root.y = this.circleRadius(this.root) + 2;
+  }
+  // Restart the force layout.
+  this.simulation
+      .nodes(nodes)
+      .links(links)
+      .start();
+
+
+  // Update the links…
+  this.link = this.svg.selectAll("line.link")
+      .data(links, function(d) { return d.target.id; });
+     
+
+  // Enter any new links.
+  this.link.enter().insert("line", ".node")
+      .attr("class", "link")
+      .attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+
+  // Exit any old links.
+  this.link.exit().remove();
+  
+
+  // Update the nodes…
+  this.node = this.svg.selectAll("circle.node")
+      .data(nodes, function(d) { return d.id; })
+      .style("fill", d=> <any>this.color(d));
+
+  this.node.transition()
+      .attr("cy", function(d) { return d.y; })
+      .attr("r", function(d) { return <any>this.circleRadius(d); });
+
+  // Enter any new nodes.
+  this.node.enter().append("circle")
+      .attr("class", "node")
+      .attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; })
+      .attr("r", function(d) { return <any>this.circleRadius(d); })
+      .style("fill", d=> this.color(d))
+      .on("click", d=> this.click(d))
+      .call(this.simulation.drag);
+
+  // Exit any old nodes.
+  this.node.exit().remove();
+}
+
+
+click(d){
+  if (d.children) {
+    d._children = d.children;
+    d.children = null;
+  } else {
+    d.children = d._children;
+    d._children = null;
+  }
+  this.update();
+}
+
+circleRadius(d){
+  return d.children ? 4.5 : Math.sqrt(d.size) / 10;
+}
+color(d){
+  return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+}
+tick() {
+  let circleRadius = this.circleRadius;
+  let width = this.width;
+  let height = this.height;
+    
+    // Apply the constraints:
+    //
+    this.simulation.nodes().forEach(function(d) {
+      if (!d.fixed) {
+        let r = circleRadius(d) + 4, dx, dy, ly = 30;
+          
+        // #1: constraint all nodes to the visible screen:
+        //d.x = Math.min(width - r, Math.max(r, d.x));
+        //d.y = Math.min(height - r, Math.max(r, d.y));
+  
+        // #1.0: hierarchy: same level nodes have to remain with a 1 LY band vertically:
+        if (d.children || d._children) {
+          var py = 0;
+          if (d.parent) {
+            py = d.parent.y;
+          }
+          d.py = d.y = py + d.depth * ly + r;
+        }
+  
+        // #1a: constraint all nodes to the visible screen: links
+        dx = Math.min(0, width - r - d.x) + Math.max(0, r - d.x);
+        dy = Math.min(0, height - r - d.y) + Math.max(0, r - d.y);
+        d.x += 2 * Math.max(-ly, Math.min(ly, dx));
+        d.y += 2 * Math.max(-ly, Math.min(ly, dy));
+        // #1b: constraint all nodes to the visible screen: charges ('repulse')
+        dx = Math.min(0, width - r - d.px) + Math.max(0, r - d.px);
+        dy = Math.min(0, height - r - d.py) + Math.max(0, r - d.py);
+        d.px += 2 * Math.max(-ly, Math.min(ly, dx));
+        d.py += 2 * Math.max(-ly, Math.min(ly, dy));
+  
+        // #2: hierarchy means childs must be BELOW parents in Y direction:
+        if (d.parent) {
+          d.y = Math.max(d.y, d.parent.y + ly);
+          d.py = Math.max(d.py, d.parent.py + ly);
+        }
+      }
+    });
+  
+    this.link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+  
+    this.node.attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
   }
 
-  initColor(){
-    const scale = d3.scaleOrdinal(d3.schemeCategory10);
-    return d => scale(d.group);
-  }
-  drag = simulation => {
-    
-      function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
+  flatten(root) {
+    var nodes = [], i = 0, depth = 0, level_widths = [1], max_width, max_depth = 1, kx, ky;
+  
+    function recurse(node, parent, depth, x) {
+      if (node.children) {
+        var w = level_widths[depth + 1] || 0;
+        level_widths[depth + 1] = w + node.children.length;
+        max_depth = Math.max(max_depth, depth + 1);
+        node.size = node.children.reduce(function(p, v, i) {
+          return p + recurse(v, node, depth + 1, w + i);
+        }, 0);
       }
-      
-      function dragged(d) {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
+      if (!node.id) node.id = ++i;
+      node.parent = parent;
+      node.depth = depth;
+      if (!node.px) {
+        node.y = depth;
+        node.x = x;
       }
-      
-      function dragended(d) {
-        if (!d3.event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
-      }
-      
-      return d3.drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended);
+      nodes.push(node);
+      return node.size;
     }
   
+    root.size = recurse(this.root, null, 0, 0);
+  
+    // now correct/balance the x positions:
+    max_width = 1;
+    for (i = level_widths.length; --i > 0; ) {
+      max_width = Math.max(max_width, level_widths[i]);
+    }
+    kx = (this.width - 20) / max_width;
+    ky = (this.height - 20) / max_depth;
+    for (i = nodes.length; --i >= 0; ) {
+      var node = nodes[i];
+      if (!node.px) {
+        node.y *= ky;
+        node.y += 10 + ky / 2;
+        node.x *= kx;
+        node.x += 10 + kx / 2;
+      }
+    }
+  
+    return nodes;
   }
+}
