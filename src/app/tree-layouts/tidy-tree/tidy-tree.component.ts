@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import * as d3 from "d3";
-import { initTransferState } from '@angular/platform-browser/src/browser/transfer_state';
-import { HierarchyPointLink, Link } from 'd3';
 
 @Component({
   selector: 'app-tidy-tree',

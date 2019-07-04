@@ -17,6 +17,8 @@ import { ForceDirectedGraphComponent } from './tree-layouts/force-directed-graph
 import { CollapsibleTreeLayoutComponent } from './tree-layouts/collapsible-tree-layout/collapsible-tree-layout.component';
 import { ForceDirctedTreeComponent } from './tree-layouts/force-dircted-tree/force-dircted-tree.component';
 import { CollapsibleForceComponent } from './tree-layouts/collapsible-force/collapsible-force.component';
+import { VerticalTreeComponent } from './tree-layouts/vertical-tree/vertical-tree.component';
+import { TreeBoxesComponent } from './tree-layouts/tree-boxes/tree-boxes.component';
 
 
 @NgModule({
@@ -33,7 +35,9 @@ import { CollapsibleForceComponent } from './tree-layouts/collapsible-force/coll
     ForceDirectedGraphComponent,
     CollapsibleTreeLayoutComponent,
     ForceDirctedTreeComponent,
-    CollapsibleForceComponent        
+    CollapsibleForceComponent,
+    VerticalTreeComponent,
+    TreeBoxesComponent        
   ],
   imports: [
     BrowserModule,

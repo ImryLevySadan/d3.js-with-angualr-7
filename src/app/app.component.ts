@@ -26,9 +26,11 @@ export class AppComponent  {
   collapsiable: boolean = false;
   collapsiableTree: boolean = false;
   simulation: boolean = false;
+  vertical: boolean = false;
+  treeBox: boolean = false;
   
-   
-  netWorkTopologies: string [] = ['Simple Network', 'Few Access Points netwoork', 'Multi Switches Network', "Tidy tree", "Force directed graph", "Force directed tree", "Collapsiable", "Collapsiable Tree"];
+  
+  netWorkTopologies: string [] = ['Simple Network', 'Few Access Points netwoork', 'Multi Switches Network', "Tidy tree", "Force directed graph", "Force directed tree", "Collapsiable", "Collapsiable Tree", "Vertical tree", "Tree box"];
 
   onSelect(event){
    
@@ -96,6 +98,26 @@ export class AppComponent  {
               this.collapsiableTree = false;
               this.simulation = false;
               break;
+          case "Vertical tree":
+              this.tidy = false;
+              this.forceDirected = false;
+              this.forceDirectedTree = false;
+              this.collapsiable = false;
+              this.collapsiableTree = false;
+              this.simulation = false;
+              this.vertical = true;
+              break;
+          case "Tree box":
+              this.tidy = false;
+              this.forceDirected = false;
+              this.forceDirectedTree = false;
+              this.collapsiable = false;
+              this.collapsiableTree = false;
+              this.simulation = false;
+              this.vertical = false;
+              this.treeBox = true;
+              break;
+              
         }
     } 
 }

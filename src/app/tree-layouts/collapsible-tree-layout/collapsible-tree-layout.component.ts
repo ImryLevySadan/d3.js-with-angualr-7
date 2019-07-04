@@ -401,14 +401,14 @@ d3: d3.TreeLayout<any>;
    
    
   let root = d3.hierarchy(data);
-  
+  root['fixed'] = true;
   root['x0'] = dy / 2;
   root['y0'] = 100;
   console.log(root);
 
   
   root.descendants().forEach((d, i) => {
-    d['id'] = i;
+    d.id = <any>i;
     d['_children'] = d.children;
     if (d.depth && d.data.name.length !== 7) d.children = null;
   });
@@ -416,18 +416,19 @@ d3: d3.TreeLayout<any>;
   const svg = d3.select("#container").append("svg")
       .attr("viewBox", <any>[-margin.left, -margin.top, width, dx])
       .style("font", "10px sans-serif")
-      .style("user-select", "none");
+      .style("user-select", "none")
 
       const gLink = svg.append("g")
       .attr("fill", "none")
       .attr("stroke", "#555")
       .attr("stroke-opacity", 0.4)
-      .attr("stroke-width", 1.5)
+      .attr("stroke-width", 1.5);
+    
 
   const gNode = svg.append("g")
       .attr("cursor", "pointer")
-      .attr("pointer-events", "all");
-
+      .attr("pointer-events", "all")
+    
   function update(source) {
     const duration = d3.event && d3.event.altKey ? 2500 : 250;
     const nodes = root.descendants().reverse();
