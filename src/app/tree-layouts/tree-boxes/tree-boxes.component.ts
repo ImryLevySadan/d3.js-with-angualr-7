@@ -2,6 +2,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import * as d3 from 'd3';
+import * as $ from 'jquery';
+
 
 @Component({
   selector: 'app-tree-boxes',
@@ -12,8 +14,8 @@ export class TreeBoxesComponent implements OnInit {
   d3: d3.TreeLayout<any>;
 
   ngOnInit() {
-    let data = {
-      "tree" : {
+   let data = {
+      
         "nodeName" : "NODE NAME 1",
         "name" : "NODE NAME 1",
         "type" : "type3",
@@ -149,10 +151,10 @@ export class TreeBoxesComponent implements OnInit {
           }
         ]
       }
-    }
 
     let urlService_ = '';
-
+    let TreeLayout: d3.TreeLayout<any>;
+    let root: any;
 	  let blue = '#337ab7';
 		let green = '#5cb85c';
 		let yellow = '#f0ad4e';
@@ -175,22 +177,18 @@ export class TreeBoxesComponent implements OnInit {
 	  let  i = 0;
 		let duration = 750;
     
-    let root = d3.hierarchy(data);
-
-    
-
     let mousedown; // Use to save temporarily 'mousedown.zoom' value
     let mouseWheel;
     let mouseWheelName;
     let isKeydownZoom = false;
 
-	  let  baseSvg;
-		let svgGroup;
-		let nodeGroup; // If nodes are not grouped together, after a click the svg node will be set after his corresponding tooltip and will hide it
-		let nodeGroupTooltip;
-		let linkGroup;
-		let linkGroupToolTip;
-    let defs;
+	  let  baseSvg: any;
+		let svgGroup: any;
+		let nodeGroup: any; // If nodes are not grouped together, after a click the svg node will be set after his corresponding tooltip and will hide it
+		let nodeGroupTooltip: any
+		let linkGroup:any;
+		let linkGroupToolTip: any;
+    let defs: any;
     
     let init = (urlService, data) => {
       urlService_ = urlService;
@@ -209,47 +207,48 @@ export class TreeBoxesComponent implements OnInit {
       }
     }
     let drawTree = (data) => {
-
-      let tree = d3.tree().size([width, height]); 
-      let treeData = tree(root);      
-      root = <any>treeData;
+      
+      // TreeLayout = d3.tree().size([width, height]); 
+      root = d3.hierarchy(data);
+      root['fixed'] = true;
 
       // Dynamically set the height of the main svg container
       // breadthFirstTraversal returns the max number of node on a same level
       // and colors the nodes
       var maxDepth = 0;
-      var maxTreeWidth = breadthFirstTraversal(treeData, function(currentLevel) {
+      var maxTreeWidth = breadthFirstTraversal(root.descendants(), function(currentLevel) {
         maxDepth++;
         currentLevel.forEach(function(node) {
-          if (node.type == 'type1')
+          if (node.data.type == 'type1')
             node.color = blue;
-          if (node.type == 'type2')
+          if (node.data.type == 'type2')
             node.color = green;
-          if (node.type == 'type3')
+          if (node.data.type == 'type3')
             node.color = yellow;
-          if (node.type == 'type4')
+          if (node.data.type == 'type4')
             node.color = purple;
           });
         });
+        
       height = maxTreeWidth * (rectNode.height + 20) + tooltip.height + 20 - margin.right - margin.left;
       width = maxDepth * (rectNode.width * 1.5) + tooltip.width / 2 - margin.top - margin.bottom;
-  
-      tree = d3.tree().size([ height, width ]);
+
+     TreeLayout = d3.tree().size([width, height]); 
+
       root['x0'] = height / 2;
       root['y0'] = 0; 
-  
+      // TreeLayout(root);
+
       baseSvg = d3.select('#tree-container').append('svg')
       .attr('width', width + margin.right + margin.left)
       .attr('height', height + margin.top + margin.bottom)
-      .attr('style', "position: absolue")
-      .attr('style', "left: 0px")
-      .attr('style', "width: 100%")
-      .attr('class', 'svgContainer')
-      .attr("style", "display = block")
-      .attr("style", "margin: auto")
+      .attr('style', "display: block")
+      .attr('style', "margin: auto")
       .call(d3.zoom()
             //.scaleExtent([0.5, 1.5]) // Limit the zoom scale
             .on('zoom', zoomAndDrag));
+
+            
   
       // Mouse wheel is desactivated, else after a first drag of the tree, wheel event drags the tree (instead of scrolling the window)
       getMouseWheelEvent();
@@ -257,7 +256,6 @@ export class TreeBoxesComponent implements OnInit {
       d3.select('#tree-container').select('svg').on('dblclick.zoom', null);
   
       svgGroup = baseSvg.append('g')
-      .attr('class','drawarea')
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
   
@@ -277,17 +275,21 @@ export class TreeBoxesComponent implements OnInit {
       defs = baseSvg.append('defs');
       initArrowDef();
       initDropShadow();
-  
-      update(root, tree);
+
+      update(root);
+
     }
 
-    let update  = (source, tree) => {
-      // Compute the new tree layout
-		let nodes = root.descendants();
-    let links = root.descendants().slice(1);
-
+    let update  = (source) => {
+        
+  // Compute the new tree layout
+  let nodes = root.descendants().reverse();
+  let links = root.links();
+  TreeLayout = d3.tree().size([width, height]); 
+  TreeLayout(root);
+               
   // Check if two nodes are in collision on the ordinates axe and move them
-  breadthFirstTraversal(root, collision);
+  breadthFirstTraversal(root.descendants(), collision);
   // Normalize for fixed-depth
   nodes.forEach(function(d) {
     d['y'] = d.depth * (rectNode.width * 1.5);
@@ -295,10 +297,10 @@ export class TreeBoxesComponent implements OnInit {
 
 // 1) ******************* Update the nodes *******************
   var node = nodeGroup.selectAll('g.node').data(nodes, function(d) {
-    return d.id || (d.id = ++i);
+    return d['id'] || (d['id'] = ++i);
   });
   var nodesTooltip = nodeGroupTooltip.selectAll('g').data(nodes, function(d) {
-    return d.id || (d.id = ++i);
+    return d['id'] || (d['id'] = ++i);
   });
 
   // Enter any new nodes at the parent's previous position
@@ -306,24 +308,25 @@ export class TreeBoxesComponent implements OnInit {
   // it is added at the top of the group, so it is drawed first
   // else the nodes tooltips are drawed before their children nodes and they
   // hide them
-  var nodeEnter = node.enter().insert('g', 'g.node')
-  .attr('class', 'node')
+  var nodeEnter = node.enter().append('g')
+  .attr('style', 'cursor: pointer')
   .attr('transform', function(d) {
-      return 'translate(' + source.y0 + ',' + source.x0 + ')'; })
-  .on('click', function(d) {
-          click(d, tree);
-    });
-  var nodeEnterTooltip = nodesTooltip.enter().append('g')
-    .attr('transform', function(d) {
-        return 'translate(' + source.y0 + ',' + source.x0 + ')'; });
+    return 'translate(' + source['y0'] + ',' + source['x0'] + ')'; })
+    .on('click', function(d) {
+        click(d);
+  });
 
+var nodeEnterTooltip = nodesTooltip.enter().append('g')
+  .attr('transform', function(d) {
+    return 'translate(' + source['y0'] + ',' + source['x0'] + ')'; })
+    
   nodeEnter.append('g').append('rect')
   .attr('rx', 6)
   .attr('ry', 6)
   .attr('width', rectNode.width)
   .attr('height', rectNode.height)
-  .attr('class', 'node-rect')
-  .attr('fill', function (d) { return d.color; })
+  .attr('fill', function (d) { 
+    return d['color']; })
   .attr('filter', 'url(#drop-shadow)');
 
   nodeEnter.append('foreignObject')
@@ -338,85 +341,106 @@ export class TreeBoxesComponent implements OnInit {
             : (rectNode.height - rectNode.textMargin * 2)
       })
   .append('xhtml').html(function(d) {
-        return '<div style="width: '
+        var html =  '<div style="width: '
             + (rectNode.width - rectNode.textMargin * 2) + 'px; height: '
-            + (rectNode.height - rectNode.textMargin * 2) + 'px;" class="node-text wordwrap">'
-            + '<b>' + d.nodeName + '</b><br><br>'
-            + '<b>Code: </b>' + d.code + '<br>'
-            + '<b>Version: </b>' + d.version + '<br>'
+            + (rectNode.height - rectNode.textMargin * 2) + 'px; color: white; font: 7px sans-serif">'
+            + '<b>' + d['data']['nodeName'] + '</b><br><br>'
+            + '<b>Code: </b>' + d['data']['code'] + '<br>'
+            + '<b>Version: </b>' + d['data']['version'] + '<br>'
             + '</div>';
+            return html;
       })
   .on('mouseover', function(d) {
-    '#nodeInfoID' + d.id.css('visibility', 'visible');
-    '#nodeInfoTextID' + d.id.css('visibility', 'visible');
+    $('#nodeInfoID' + d['id']).css('visibility', 'visible');
+    $('#nodeInfoTextID' + d['id']).css('visibility', 'visible');
   })
   .on('mouseout', function(d) {
-    '#nodeInfoID' + d.id.css('visibility', 'hidden');
-    '#nodeInfoTextID' + d.id.css('visibility', 'hidden');
+    $('#nodeInfoID' + d['id']).css('visibility', 'hidden');
+    $('#nodeInfoTextID' + d['id']).css('visibility', 'hidden');
   });
 
   nodeEnterTooltip.append("rect")
-  .attr('id', function(d) { return 'nodeInfoID' + d.id; })
+  .attr('id', function(d) { 
+    return 'nodeInfoID' + d['id']; })
     .attr('x', rectNode.width / 2)
   .attr('y', rectNode.height / 2)
   .attr('width', tooltip.width)
   .attr('height', tooltip.height)
-    .attr('class', 'tooltip-box')
+    .attr("style", "background: rgba(0, 0, 0, 0.7)")
+    .attr("style", "visibility: hidden")
+    .attr("style", "position: absolute")
+    .attr("style", "border-width: 1px")
+    .attr("style", "border-style: solid")
+    .attr("style", "border-color: black")
+    .attr("style", "border-top-right-radius: 0.5em")
     .style('fill-opacity', 0.8)
   .on('mouseover', function(d) {
-    '#nodeInfoID' + d.id.css('visibility', 'visible');
-    ('#nodeInfoTextID' + d.id.css('visibility', 'visible'))
+    $('#nodeInfoID' + d['id']).css('visibility', 'visible');
+    $('#nodeInfoTextID' + d['id']).css('visibility', 'visible');
     removeMouseEvents();
   })
   .on('mouseout', function(d) {
-    '#nodeInfoID' + d.id.css('visibility', 'hidden');
-    '#nodeInfoTextID' + d.id.css('visibility', 'hidden');
+  	$('#nodeInfoID' + d['id']).css('visibility', 'hidden');
+			$('#nodeInfoTextID' + d['id']).css('visibility', 'hidden');
     reactivateMouseEvents();
   });
 
   nodeEnterTooltip.append("text")
-  .attr('id', function(d) { return 'nodeInfoTextID' + d.id; })
+  .attr('id', function(d) { 
+    return 'nodeInfoTextID' + d['id']; })
     .attr('x', rectNode.width / 2 + tooltip.textMargin)
   .attr('y', rectNode.height / 2 + tooltip.textMargin * 2)
   .attr('width', tooltip.width)
   .attr('height', tooltip.height)
   .attr('class', 'tooltip-text')
-  .style('fill', 'white')
+  .attr("visibility", "hidden")
+  .attr("fill", "white")
+  .attr("style", "font: 7px sans-serif")
+  .attr("display", "block")
+  .attr("style", "padding: 5px")
   .append("tspan")
-    .text(function(d) {return 'Name: ' + d.name;})
+    .text(function(d) {return 'Name: ' + d['data']['name'];})
     .append("tspan")
     .attr('x', rectNode.width / 2 + tooltip.textMargin)
     .attr('dy', '1.5em')
-    .text(function(d) {return 'Info: ' + d.label;});
+    .text(function(d) {
+      return 'Info: ' + d['data']['label'];});
 
   // Transition nodes to their new position.
-  var nodeUpdate = node.transition().duration(duration)
-  .attr('transform', function(d) { return 'translate(' + d.y + ',' + d.x + ')'; });
-  nodesTooltip.transition().duration(duration)
-  .attr('transform', function(d) { return 'translate(' + d.y + ',' + d.x + ')'; });
+  var nodeUpdate = node.merge(nodeEnter).transition().duration(duration)
+		.attr('transform', function (d) { 
+      return 'translate(' + d['y'] + ',' + d['x'] + ')'; })
+      
+		nodesTooltip.transition().duration(duration)
+		.attr('transform', function(d) { 
+      return 'translate(' + d['y'] + ',' + d['x'] + ')'; });
 
-  nodeUpdate.select('rect')
-  .attr('class', function(d) { return d._children ? 'node-rect-closed' : 'node-rect'; });
+		nodeUpdate.select('rect')
+		.attr('class', function(d) { 
+      console.log(d)
+      return d['_children'] ? 'node-rect-closed' : 'node-rect'; });
 
-  nodeUpdate.select('text').style('fill-opacity', 1);
+		nodeUpdate.select('text').style('fill-opacity', 1);
 
-  // Transition exiting nodes to the parent's new position
-  var nodeExit = node.exit().transition().duration(duration)
-    .attr('transform', function(d) { return 'translate(' + source.y + ',' + source.x + ')'; })
-    .remove();
-  nodesTooltip.exit().transition().duration(duration)
-    .attr('transform', function(d) { return 'translate(' + source.y + ',' + source.x + ')'; })
-  .remove();
 
-  nodeExit.select('text').style('fill-opacity', 1e-6);
+		// Transition exiting nodes to the parent's new position
+		var nodeExit = node.exit().transition().duration(duration)
+			.attr('transform', function(d) { return 'translate(' + source.y + ',' + source.x + ')'; })
+			.remove();
+		nodesTooltip.exit().transition().duration(duration)
+			.attr('transform', function(d) { return 'translate(' + source.y + ',' + source.x + ')'; })
+		.remove();
+
+		nodeExit.select('text').style('fill-opacity', 1e-6);
+
 
 
 // 2) ******************* Update the links *******************
-  var link = linkGroup.selectAll('path').data(links, function(d) {
-    return d.target.id;
+  var link = linkGroup.selectAll('path').data(<any>links, <any>function(d) {
+    return d;
   });
-  var linkTooltip = linkGroupToolTip.selectAll('g').data(links, function(d) {
-    return d.target.id;
+  var linkTooltip = linkGroupToolTip.selectAll('g').data(<any>links, function(d) {
+    return d['target']['id'];
   });
 
   function linkMarkerStart(direction, isSelected) {
@@ -439,84 +463,90 @@ export class TreeBoxesComponent implements OnInit {
   }
 
   d3.selection.prototype.moveToFront = function() {
-      return this.each(function(){
-          this.parentNode.appendChild(this);
-        });
-    };
+    return this.each(function(){
+        this.parentNode.appendChild(this);
+      });
+  };
 
   // Enter any new links at the parent's previous position.
     // Enter any new links at the parent's previous position.
     var linkenter = link.enter().insert('path', 'g')
-    .attr('class', 'link')
-    .attr('id', function(d) { return 'linkID' + d.target.id; })
-    .attr('d', function(d) { return diagonal(d); })
+    // .attr('class', 'link')
+    .attr("style", "fill: none")
+    .attr("style", "stroke: lightsteelblue")
+    .attr("style", "stroke-width: 2px") 
+    .attr('id', function(d) { 
+      return 'linkID' + d['target']['id']; })
+    .attr('d', function(d) { 
+      return diagonal(d); })
     .attr('marker-end', 'url(#end-arrow)')
-    .attr('marker-start', function(d) { return linkMarkerStart(d.target.link.direction, false); })
+    .attr('marker-start', function(d) { 
+      return linkMarkerStart(d['target']['data']['link']['direction'], false); })
     .on('mouseover', function(d) {
       d3.select(this).attr("call", d3.selection.prototype.moveToFront())
 
       d3.select(this).attr('marker-end', 'url(#end-arrow-selected)');
-      d3.select(this).attr('marker-start', linkMarkerStart(d.target.link.direction, true));
-      d3.select(this).attr('class', 'linkselected');
+      d3.select(this).attr('marker-start', linkMarkerStart(d['target']['data']['link']['direction'], true));
+      d3.select(this).attr('style', 'fill: none; stroke: tomato; stroke-width: 2px;');
 
-      '#tooltipLinkID' + d.target.id.attr('x', (d.target.y + rectNode.width - d.source.y) / 2 + d.source.y);
-      '#tooltipLinkID' + d.target.id.attr('y', (d.target.x - d.source.x) / 2 + d.source.x);
-      '#tooltipLinkID' + d.target.id.css('visibility', 'visible');
-      '#tooltipLinkTextID' + d.target.id.css('visibility', 'visible');
+      $('#tooltipLinkID' + d['target']['id']).attr('x', (d['target']['y'] + rectNode.width - d['source']['y']) / 2 + d['source']['y']);
+      $('#tooltipLinkID' + d['target']['id']).attr('y', (d['target']['x'] - d['source']['x']) / 2 + d['source']['x']);
+      $('#tooltipLinkID' + d['target']['id']).css('visibility', 'visible');
+      $('#tooltipLinkTextID' + d['target']['id']).css('visibility', 'visible');
     })
     .on('mouseout', function(d) {
       d3.select(this).attr('marker-end', 'url(#end-arrow)');
-      d3.select(this).attr('marker-start', linkMarkerStart(d.target.link.direction, false));
-      d3.select(this).attr('class', 'link');
-      '#tooltipLinkID' + d.target.id.css('visibility', 'hidden');
-      '#tooltipLinkTextID' + d.target.id.css('visibility', 'hidden');
+      d3.select(this).attr('marker-start', linkMarkerStart(d['target']['data']['link']['direction'], false));
+      d3.select(this).attr('style', '	fill: none; stroke: lightsteelblue; stroke-width: 2px;');
+      $('#tooltipLinkID' + d['target']['id']).css('visibility', 'hidden');
+      $('#tooltipLinkTextID' + d['target']['id']).css('visibility', 'hidden');
     });
 
     linkTooltip.enter().append('rect')
-    .attr('id', function(d) { return 'tooltipLinkID' + d.target.id; })
-    .attr('class', 'tooltip-box')
+    .attr('id', function(d) { return 'tooltipLinkID' + d['target']['id']; })
+    .attr('style', 'background: rgba(0, 0, 0, 0.7); visibility: hidden; position: absolute; border-style: solid; border-width: 1px; border-color: black; border-top-right-radius: 0.5em;')
     .style('fill-opacity', 0.8)
-    .attr('x', function(d) { return (d.target.y + rectNode.width - d.source.y) / 2 + d.source.y; })
-    .attr('y', function(d) { return (d.target.x - d.source.x) / 2 + d.source.x; })
+    .attr('x', function(d) { return (d['target']['y'] + rectNode.width - d['source']['y']) / 2 + d['source']['y']; })
+    .attr('y', function(d) { return (d['target']['x'] - d['source']['x']) / 2 + d['source']['x']; })
     .attr('width', tooltip.width)
     .attr('height', tooltip.height)
     .on('mouseover', function(d) {
-      '#tooltipLinkID' + d.target.id.css('visibility', 'visible');
-      '#tooltipLinkTextID' + d.target.id.css('visibility', 'visible');
+      $('#tooltipLinkID' + d['target']['id']).css('visibility', 'visible');
+      $('#tooltipLinkTextID' + d['target']['id']).css('visibility', 'visible');
       // After selected a link, the cursor can be hover the tooltip, that's why we still need to highlight the link and the arrow
-      '#linkID' + d.target.id.attr('class', 'linkselected');
-      '#linkID' + d.target.id.attr('marker-end', 'url(#end-arrow-selected)');
-      '#linkID' + d.target.id.attr('marker-start', linkMarkerStart(d.target.link.direction, true));
+      $('#linkID' + d['target']['id']).attr('style', 'fill: none; stroke: tomato; stroke-width: 2px;');
+      $('#linkID' + d['target']['id']).attr('marker-end', 'url(#end-arrow-selected)');
+      $('#linkID' + d['target']['id']).attr('marker-start', linkMarkerStart(d['target']['data']['link']['direction'], true));
 
       removeMouseEvents();
     })
     .on('mouseout', function(d) {
-      '#tooltipLinkID' + d.target.id.css('visibility', 'hidden');
-      '#tooltipLinkTextID' + d.target.id.css('visibility', 'hidden');
-      '#linkID' + d.target.id.attr('class', 'link');
-      '#linkID' + d.target.id.attr('marker-end', 'url(#end-arrow)');
-      '#linkID' + d.target.id.attr('marker-start', linkMarkerStart(d.target.link.direction, false));
+      '#tooltipLinkID' + d['target']['id'].css('visibility', 'hidden');
+      '#tooltipLinkTextID' + d['target']['id'].css('visibility', 'hidden');
+      '#linkID' + d['target']['id'].attr('style', '	fill: none; stroke: lightsteelblue; stroke-width: 2px;');
+      '#linkID' + d['target']['id'].attr('marker-end', 'url(#end-arrow)');
+      '#linkID' + d['target']['id'].attr('marker-start', linkMarkerStart(d['target']['data']['link']['direction'], false));
 
       reactivateMouseEvents();
     });
 
     linkTooltip.enter().append('text')
-    .attr('id', function(d) { return 'tooltipLinkTextID' + d.target.id; })
+    .attr('id', function(d) { return 'tooltipLinkTextID' + d['target']['id']; })
     .attr('class', 'tooltip-text')
-    .attr('x', function(d) { return (d.target.y + rectNode.width - d.source.y) / 2 + d.source.y + tooltip.textMargin; })
-    .attr('y', function(d) { return (d.target.x - d.source.x) / 2 + d.source.x + tooltip.textMargin * 2; })
+    .attr('x', function(d) { return (d['target']['y'] + rectNode.width - d['source']['y']) / 2 + d['source']['y'] + tooltip.textMargin; })
+    .attr('y', function(d) { return (d['target']['x'] - d['source']['x']) / 2 + d['source']['x'] + tooltip.textMargin * 2; })
     .attr('width', tooltip.width)
     .attr('height', tooltip.height)
     .style('fill', 'white')
     .append("tspan")
-       .text(function(d) { return linkType(d.target.link); })
+       .text(function(d) { return linkType(d['target']['data']['link']); })
        .append("tspan")
-      .attr('x', function(d) { return (d.target.y + rectNode.width - d.source.y) / 2 + d.source.y + tooltip.textMargin; })
+      .attr('x', function(d) { return (d['target']['y'] + rectNode.width - d['source']['y']) / 2 + d['source']['y'] + tooltip.textMargin; })
        .attr('dy', '1.5em')
-      .text(function(d) {return d.target.link.name;});
+      .text(function(d) { return d['target']['data']['link']['name'];});
 
   // Transition links to their new position.
-  var linkUpdate = link.transition().duration(duration)
+  var linkUpdate = link.merge(linkenter).transition().duration(duration)
               .attr('d', function(d) { return diagonal(d); });
   linkTooltip.transition().duration(duration)
          .attr('d', function(d) { return diagonal(d); });
@@ -533,8 +563,8 @@ export class TreeBoxesComponent implements OnInit {
     d['x0'] = d['x'];
     d['y0'] = d['y'];
   });
-    }
-
+}
+  
 // Zoom functionnality is desactivated (user can use browser Ctrl + mouse wheel shortcut)
 let zoomAndDrag = () => {
   //var scale = d3.event.scale,
@@ -555,7 +585,7 @@ let zoomAndDrag = () => {
 }
 
 // Toggle children on click.
-let click = (d, tree) => {
+let click = (d) => {
   if (d.children) {
     d._children = d.children;
     d.children = null;
@@ -563,16 +593,16 @@ let click = (d, tree) => {
     d.children = d._children;
     d._children = null;
   }
-  update(d, tree);
+  update(d);
 }
 
 // Breadth-first traversal of the tree
 	// func function is processed on every node of a same level
 	// return the max level
   let breadthFirstTraversal = (tree, func) =>
-  {
+  {    
     var max = 0;
-    if (tree && tree.length > 0)
+    if (tree && tree['length'] > 0)
     {
       var currentDepth = tree[0].depth;
       var fifo = [];
@@ -608,7 +638,7 @@ let click = (d, tree) => {
 				  siblings[i + 1].x = siblings[i].x + rectNode.height + minPadding;
 		  }
 	  }
-	}
+  }
   let removeMouseEvents = () => {
 		// Drag and zoom behaviors are temporarily disabled, so tooltip text can be selected
 		mousedown = d3.select('#tree-container').select('svg').on('mousedown.zoom');
@@ -693,7 +723,7 @@ let click = (d, tree) => {
 		.attr('markerWidth', 6)
 		.attr('markerHeight', 6)
 		.attr('orient', 'auto')
-		.attr('class', 'arrow')
+		.attr('style', 'fill: lightsteelblue; stroke-width: 1px;')
 		.append('path')
 		.attr('d', 'M0,-5L10,0L0,5');
 
@@ -719,7 +749,7 @@ let click = (d, tree) => {
 		.attr('markerWidth', 6)
 		.attr('markerHeight', 6)
 		.attr('orient', 'auto')
-		.attr('class', 'arrow')
+		.attr('style', 'fill: lightsteelblue; stroke-width: 1px;')
 		.append('path')
 		.attr('d', 'M10,-5L0,0L10,5');
 
@@ -732,7 +762,7 @@ let click = (d, tree) => {
 		.attr('markerWidth', 6)
 		.attr('markerHeight', 6)
 		.attr('orient', 'auto')
-		.attr('class', 'arrowselected')
+		.attr('class', 'fill: tomato; stroke-width: 2px;')
 		.append('path')
 		.attr('d', 'M10,-5L0,0L10,5');
 	}

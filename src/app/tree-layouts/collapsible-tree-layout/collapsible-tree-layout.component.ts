@@ -404,7 +404,6 @@ d3: d3.TreeLayout<any>;
   root['fixed'] = true;
   root['x0'] = dy / 2;
   root['y0'] = 100;
-  console.log(root);
 
   
   root.descendants().forEach((d, i) => {
@@ -433,11 +432,14 @@ d3: d3.TreeLayout<any>;
     const duration = d3.event && d3.event.altKey ? 2500 : 250;
     const nodes = root.descendants().reverse();
     const links = root.links();
-
+    
+    console.log(root);
+    console.log(nodes);
+    console.log(links);
     // Compute the new tree layout.
     let TreeLayout = d3.tree().nodeSize([dx, dy]);
     TreeLayout(root);
-  
+  console.log(root);
     let left = root;
     let right = root;
     root.eachBefore(node => {
