@@ -39,9 +39,7 @@ i: number = 0;
       let width = 960 - margin.left - margin.right + 400;
       let height = 500 - margin.top - margin.bottom;
       
-      let treemap = d3.tree()
-      .size([width, height]);
-
+      let treemap = d3.tree().size([width, height]);
       let treeData = treemap(root);
       let nodes = treeData.descendants();
       let links = treeData.descendants().slice(1);

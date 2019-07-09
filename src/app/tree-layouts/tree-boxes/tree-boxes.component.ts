@@ -154,13 +154,12 @@ export class TreeBoxesComponent implements OnInit {
 
     let urlService_ = '';
     let TreeLayout: d3.TreeLayout<any>;
-    let root: any;
 	  let blue = '#337ab7';
 		let green = '#5cb85c';
 		let yellow = '#f0ad4e';
 		let blueText = '#4ab1eb';
 		let purple = '#9467bd';
-
+    
 	let margin = {
 					top : 0,
 					right : 0,
@@ -170,8 +169,10 @@ export class TreeBoxesComponent implements OnInit {
 
   // Height and width are redefined later in function of the size of the tree
 		// (after that the data are loaded)
-		let width =800 - margin.right - margin.left;
-    let height = 400 - margin.top - margin.bottom;
+    let root;
+    let treeData;
+    let width = 800 - margin.right - margin.left;
+		let height = 400 - margin.top - margin.bottom;
     let  rectNode = { width : 120, height : 45, textMargin : 5 };
 		let tooltip = { width : 150, height : 40, textMargin : 5 };
 	  let  i = 0;
@@ -182,12 +183,12 @@ export class TreeBoxesComponent implements OnInit {
     let mouseWheelName;
     let isKeydownZoom = false;
 
-	  let  baseSvg: any;
+    let  baseSvg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
 		let svgGroup: any;
 		let nodeGroup: any; // If nodes are not grouped together, after a click the svg node will be set after his corresponding tooltip and will hide it
 		let nodeGroupTooltip: any
 		let linkGroup:any;
-		let linkGroupToolTip: any;
+    let linkGroupToolTip: any;
     let defs: any;
     
     let init = (urlService, data) => {
@@ -207,16 +208,15 @@ export class TreeBoxesComponent implements OnInit {
       }
     }
     let drawTree = (data) => {
-      
-      // TreeLayout = d3.tree().size([width, height]); 
+
       root = d3.hierarchy(data);
-      root['fixed'] = true;
+      TreeLayout = d3.tree().size([height, width]); 
 
       // Dynamically set the height of the main svg container
       // breadthFirstTraversal returns the max number of node on a same level
       // and colors the nodes
       var maxDepth = 0;
-      var maxTreeWidth = breadthFirstTraversal(root.descendants(), function(currentLevel) {
+      var maxTreeWidth = breadthFirstTraversal(TreeLayout(root).descendants(), function(currentLevel) {
         maxDepth++;
         currentLevel.forEach(function(node) {
           if (node.data.type == 'type1')
@@ -229,26 +229,20 @@ export class TreeBoxesComponent implements OnInit {
             node.color = purple;
           });
         });
+        height = maxTreeWidth * (rectNode.height + 20) + tooltip.height + 20 - margin.right - margin.left;
+        width = maxDepth * (rectNode.width * 1.5) + tooltip.width / 2 - margin.top - margin.bottom;
         
-      height = maxTreeWidth * (rectNode.height + 20) + tooltip.height + 20 - margin.right - margin.left;
-      width = maxDepth * (rectNode.width * 1.5) + tooltip.width / 2 - margin.top - margin.bottom;
-
-     TreeLayout = d3.tree().size([width, height]); 
-
+      TreeLayout = d3.tree().size([height, width]); 
+      treeData = TreeLayout(root);
       root['x0'] = height / 2;
       root['y0'] = 0; 
-      // TreeLayout(root);
 
+     
       baseSvg = d3.select('#tree-container').append('svg')
       .attr('width', width + margin.right + margin.left)
       .attr('height', height + margin.top + margin.bottom)
       .attr('style', "display: block")
       .attr('style', "margin: auto")
-      .call(d3.zoom()
-            //.scaleExtent([0.5, 1.5]) // Limit the zoom scale
-            .on('zoom', zoomAndDrag));
-
-            
   
       // Mouse wheel is desactivated, else after a first drag of the tree, wheel event drags the tree (instead of scrolling the window)
       getMouseWheelEvent();
@@ -257,7 +251,8 @@ export class TreeBoxesComponent implements OnInit {
   
       svgGroup = baseSvg.append('g')
       .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+     
   
       // SVG elements under nodeGroupTooltip could be associated with nodeGroup,
       // same for linkGroupToolTip and linkGroup,
@@ -275,28 +270,24 @@ export class TreeBoxesComponent implements OnInit {
       defs = baseSvg.append('defs');
       initArrowDef();
       initDropShadow();
-
-      update(root);
-
+      update(treeData);
     }
 
     let update  = (source) => {
-        
   // Compute the new tree layout
-  let nodes = root.descendants().reverse();
-  let links = root.links();
-  TreeLayout = d3.tree().size([width, height]); 
-  TreeLayout(root);
-               
+  let nodes = treeData.descendants().reverse();
+  let links = treeData.links();
+
   // Check if two nodes are in collision on the ordinates axe and move them
-  breadthFirstTraversal(root.descendants(), collision);
+  breadthFirstTraversal(treeData.descendants(), collision);
   // Normalize for fixed-depth
+  
   nodes.forEach(function(d) {
-    d['y'] = d.depth * (rectNode.width * 1.5);
+   d['y'] = d.depth * (rectNode.width * 1.5);
   });
 
 // 1) ******************* Update the nodes *******************
-  var node = nodeGroup.selectAll('g.node').data(nodes, function(d) {
+  var node = nodeGroup.selectAll('g').data(nodes, function(d) {
     return d['id'] || (d['id'] = ++i);
   });
   var nodesTooltip = nodeGroupTooltip.selectAll('g').data(nodes, function(d) {
@@ -310,17 +301,18 @@ export class TreeBoxesComponent implements OnInit {
   // hide them
   var nodeEnter = node.enter().append('g')
   .attr('style', 'cursor: pointer')
-  .attr('transform', function(d) {
-    return 'translate(' + source['y0'] + ',' + source['x0'] + ')'; })
+  .attr('transform', d => 
+'translate(' + source['y0'] + ',' + source['x0'] + ')')
     .on('click', function(d) {
         click(d);
   });
 
 var nodeEnterTooltip = nodesTooltip.enter().append('g')
+.style("font", "7px sans-serif")
   .attr('transform', function(d) {
     return 'translate(' + source['y0'] + ',' + source['x0'] + ')'; })
     
-  nodeEnter.append('g').append('rect')
+  nodeEnter.append('rect')
   .attr('rx', 6)
   .attr('ry', 6)
   .attr('width', rectNode.width)
@@ -367,7 +359,7 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
   .attr('width', tooltip.width)
   .attr('height', tooltip.height)
     .attr("style", "background: rgba(0, 0, 0, 0.7)")
-    .attr("style", "visibility: hidden")
+    .attr("visibility", "hidden")
     .attr("style", "position: absolute")
     .attr("style", "border-width: 1px")
     .attr("style", "border-style: solid")
@@ -395,7 +387,6 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
   .attr('class', 'tooltip-text')
   .attr("visibility", "hidden")
   .attr("fill", "white")
-  .attr("style", "font: 7px sans-serif")
   .attr("display", "block")
   .attr("style", "padding: 5px")
   .append("tspan")
@@ -411,35 +402,39 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
 		.attr('transform', function (d) { 
       return 'translate(' + d['y'] + ',' + d['x'] + ')'; })
       
-		nodesTooltip.transition().duration(duration)
+		nodesTooltip.merge(nodeEnterTooltip).transition().duration(duration)
 		.attr('transform', function(d) { 
       return 'translate(' + d['y'] + ',' + d['x'] + ')'; });
 
-		nodeUpdate.select('rect')
-		.attr('class', function(d) { 
-      console.log(d)
-      return d['_children'] ? 'node-rect-closed' : 'node-rect'; });
+    nodeUpdate.select('rect')
+    .attr("stroke-width", function(d) { 
+      return d['_children'] ? '2px' : ' '; })
+    .attr("stroke", function(d) { 
+      return d['_children'] ? 'rgb(0,0,0)' : ''; });
 
 		nodeUpdate.select('text').style('fill-opacity', 1);
 
 
 		// Transition exiting nodes to the parent's new position
-		var nodeExit = node.exit().transition().duration(duration)
-			.attr('transform', function(d) { return 'translate(' + source.y + ',' + source.x + ')'; })
-			.remove();
-		nodesTooltip.exit().transition().duration(duration)
-			.attr('transform', function(d) { return 'translate(' + source.y + ',' + source.x + ')'; })
-		.remove();
+		var nodeExit = node.exit().transition().duration(duration).remove()
+      .attr('transform', function(d) { 
+        return `translate(${source.y},${source.x})`; });
 
-		nodeExit.select('text').style('fill-opacity', 1e-6);
+		nodesTooltip.exit().transition().duration(duration)
+      .attr('transform', function(d) { return 'translate(' + source.y + ',' + source.x + ')'; })
+      .remove()
+      .attr("fill-opacity", 0)
+        .attr("stroke-opacity", 0);
+
+      nodeExit.select('text').style('fill-opacity', 1e-6);
 
 
 
 // 2) ******************* Update the links *******************
-  var link = linkGroup.selectAll('path').data(<any>links, <any>function(d) {
+  var link = linkGroup.selectAll('path').data(links, function(d) {
     return d;
   });
-  var linkTooltip = linkGroupToolTip.selectAll('g').data(<any>links, function(d) {
+  var linkTooltip = linkGroupToolTip.selectAll('g').data(links, function(d) {
     return d['target']['id'];
   });
 
@@ -462,19 +457,18 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
     return '???';
   }
 
-  d3.selection.prototype.moveToFront = function() {
-    return this.each(function(){
+  let moveToFront = (d) =>  {
+    return d.each(function(){
         this.parentNode.appendChild(this);
       });
   };
 
   // Enter any new links at the parent's previous position.
     // Enter any new links at the parent's previous position.
-    var linkenter = link.enter().insert('path', 'g')
-    // .attr('class', 'link')
-    .attr("style", "fill: none")
-    .attr("style", "stroke: lightsteelblue")
-    .attr("style", "stroke-width: 2px") 
+    var linkenter = link.enter().append('path')
+    .attr("fill", "none")
+    .attr("stroke", "lightsteelblue")
+    .attr("stroke-width", "2px") 
     .attr('id', function(d) { 
       return 'linkID' + d['target']['id']; })
     .attr('d', function(d) { 
@@ -483,7 +477,7 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
     .attr('marker-start', function(d) { 
       return linkMarkerStart(d['target']['data']['link']['direction'], false); })
     .on('mouseover', function(d) {
-      d3.select(this).attr("call", d3.selection.prototype.moveToFront())
+      // d3.select(this).moveToFront();
 
       d3.select(this).attr('marker-end', 'url(#end-arrow-selected)');
       d3.select(this).attr('marker-start', linkMarkerStart(d['target']['data']['link']['direction'], true));
@@ -521,18 +515,18 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
       removeMouseEvents();
     })
     .on('mouseout', function(d) {
-      '#tooltipLinkID' + d['target']['id'].css('visibility', 'hidden');
-      '#tooltipLinkTextID' + d['target']['id'].css('visibility', 'hidden');
-      '#linkID' + d['target']['id'].attr('style', '	fill: none; stroke: lightsteelblue; stroke-width: 2px;');
-      '#linkID' + d['target']['id'].attr('marker-end', 'url(#end-arrow)');
-      '#linkID' + d['target']['id'].attr('marker-start', linkMarkerStart(d['target']['data']['link']['direction'], false));
+      $('#tooltipLinkID' + d.target.id).css('visibility', 'hidden');
+      $('#tooltipLinkTextID' + d.target.id).css('visibility', 'hidden');
+      $('#linkID' + d.target.id).attr('class', 'link');
+      $('#linkID' + d.target.id).attr('marker-end', 'url(#end-arrow)');
+      $('#linkID' + d.target.id).attr('marker-start', linkMarkerStart(d.target.data.link.direction, false));
 
       reactivateMouseEvents();
     });
 
     linkTooltip.enter().append('text')
     .attr('id', function(d) { return 'tooltipLinkTextID' + d['target']['id']; })
-    .attr('class', 'tooltip-text')
+    .attr('style', 'visibility: hidden; font: 7px sans-serif; color: white; display: block; padding: 5px;')
     .attr('x', function(d) { return (d['target']['y'] + rectNode.width - d['source']['y']) / 2 + d['source']['y'] + tooltip.textMargin; })
     .attr('y', function(d) { return (d['target']['x'] - d['source']['x']) / 2 + d['source']['x'] + tooltip.textMargin * 2; })
     .attr('width', tooltip.width)
@@ -547,7 +541,8 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
 
   // Transition links to their new position.
   var linkUpdate = link.merge(linkenter).transition().duration(duration)
-              .attr('d', function(d) { return diagonal(d); });
+              .attr('d', function(d) {console.log(d); return diagonal(d); });
+
   linkTooltip.transition().duration(duration)
          .attr('d', function(d) { return diagonal(d); });
 
@@ -566,23 +561,23 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
 }
   
 // Zoom functionnality is desactivated (user can use browser Ctrl + mouse wheel shortcut)
-let zoomAndDrag = () => {
-  //var scale = d3.event.scale,
-  let scale = 1,
-      translation = d3.event.translate,
-      tbound = -height * scale,
-      bbound = height * scale,
-      lbound = (-width + margin.right) * scale,
-      rbound = (width - margin.left) * scale;
-  // limit translation to thresholds
-  translation = [
-      Math.max(Math.min(translation[0], rbound), lbound),
-      Math.max(Math.min(translation[1], bbound), tbound)
-  ];
-  d3.select('.drawarea')
-      .attr('transform', 'translate(' + translation + ')' +
-            ' scale(' + scale + ')');
-}
+// let zoomAndDrag = () => {
+//   var scale = d3.event();
+//       // scale = 1,
+//       let translation = d3.event.translate;
+//       let tbound = -height * scale;
+//       let bbound = height * scale;
+//       let lbound = (-width + margin.right) * scale;
+//       let rbound = (width - margin.left) * scale;
+//   // limit translation to thresholds
+//   translation = [
+//       Math.max(Math.min(translation[0], rbound), lbound),
+//       Math.max(Math.min(translation[1], bbound), tbound)
+//   ];
+//   d3.select('.drawarea')
+//       .attr('transform', 'translate(' + translation + ')' +
+//             ' scale(' + scale + ')');
+// }
 
 // Toggle children on click.
 let click = (d) => {
@@ -712,6 +707,8 @@ let click = (d) => {
 	    .attr("operator", "over");
   }
   
+
+
   let  initArrowDef = () => {
 		// Build the arrows definitions
 		// End arrow

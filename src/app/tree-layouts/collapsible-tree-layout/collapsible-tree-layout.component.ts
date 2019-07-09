@@ -433,13 +433,10 @@ d3: d3.TreeLayout<any>;
     const nodes = root.descendants().reverse();
     const links = root.links();
     
-    console.log(root);
-    console.log(nodes);
-    console.log(links);
     // Compute the new tree layout.
     let TreeLayout = d3.tree().nodeSize([dx, dy]);
     TreeLayout(root);
-  console.log(root);
+
     let left = root;
     let right = root;
     root.eachBefore(node => {
@@ -454,8 +451,9 @@ d3: d3.TreeLayout<any>;
         .tween("resize", window.onresize ? null : () => () => svg.dispatch("toggle"));
 
     // Update the nodes…
+   
     const node = gNode.selectAll("g")
-      .data(nodes, d => d['id']);
+      .data(nodes, d =>d['id']);
 
     // Enter any new nodes at the parent's previous position.
     const nodeEnter = node.enter().append("g")
@@ -490,7 +488,7 @@ d3: d3.TreeLayout<any>;
 
     // Transition exiting nodes to the parent's new position.
     const nodeExit = node.exit().transition(transition).remove()
-        .attr("transform", d => `translate(${source.y},${source.x})`)
+        .attr("transform", d =>  `translate(${source.y},${source.x})`)
         .attr("fill-opacity", 0)
         .attr("stroke-opacity", 0);
 
