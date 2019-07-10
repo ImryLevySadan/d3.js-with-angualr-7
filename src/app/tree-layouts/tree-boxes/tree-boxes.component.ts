@@ -1,8 +1,9 @@
  //SOURCE: https://github.com/swayvil/d3js-tree-boxes/blob/master/src/scripts/tree-boxes.js
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
+import {FunctionalityServicsService} from 'src/app/services/functionality-servics.service';
 
 
 @Component({
@@ -12,147 +13,14 @@ import * as $ from 'jquery';
 })
 export class TreeBoxesComponent implements OnInit {
   d3: d3.TreeLayout<any>;
+  @Input('data') data;
 
+
+constructor(private functionalityService: FunctionalityServicsService) {
+  
+}
   ngOnInit() {
-   let data = {
-      
-        "nodeName" : "NODE NAME 1",
-        "name" : "NODE NAME 1",
-        "type" : "type3",
-        "code" : "N1",
-        "label" : "Node name 1",
-        "version" : "v1.0",
-        "link" : {
-            "name" : "Link NODE NAME 1",
-            "nodeName" : "NODE NAME 1",
-            "direction" : "ASYN"
-          },
-        "children" : [{
-            "nodeName" : "NODE NAME 2.1",
-            "name" : "NODE NAME 2.1",
-            "type" : "type1",
-            "code" : "N2.1",
-            "label" : "Node name 2.1",
-            "version" : "v1.0",
-            "link" : {
-                "name" : "Link node 1 to 2.1",
-                "nodeName" : "NODE NAME 2.1",
-                "direction" : "SYNC"
-              },
-            "children" : [{
-                "nodeName" : "NODE NAME 3.1",
-                "name" : "NODE NAME 3.1",
-                "type" : "type2",
-                "code" : "N3.1",
-                "label" : "Node name 3.1",
-                "version" : "v1.0",
-                "link" : {
-                    "name" : "Link node 2.1 to 3.1",
-                    "nodeName" : "NODE NAME 3.1",
-                    "direction" : "SYNC"
-                  },
-                "children" : []
-              }, {
-                "nodeName" : "NODE NAME 3.2",
-                "name" : "NODE NAME 3.2",
-                "type" : "type2",
-                "code" : "N3.2",
-                "label" : "Node name 3.2",
-                "version" : "v1.0",
-                "link" : {
-                    "name" : "Link node 2.1 to 3.2",
-                    "nodeName" : "NODE NAME 3.1",
-                    "direction" : "SYNC"
-                  },
-                "children" : []
-              }
-            ]
-          }, {
-            "nodeName" : "NODE NAME 2.2",
-            "name" : "NODE NAME 2.2",
-            "type" : "type1",
-            "code" : "N2.2",
-            "label" : "Node name 2.2",
-            "version" : "v1.0",
-            "link" : {
-                "name" : "Link node 1 to 2.2",
-                "nodeName" : "NODE NAME 2.2",
-                "direction" : "ASYN"
-              },
-            "children" : []
-          }, {
-            "nodeName" : "NODE NAME 2.3",
-            "name" : "NODE NAME 2.3",
-            "type" : "type1",
-            "code" : "N2.3",
-            "label" : "Node name 2.3",
-            "version" : "v1.0",
-            "link" : {
-                "name" : "Link node 1 to 2.3",
-                "nodeName" : "NODE NAME 2.3",
-                "direction" : "ASYN"
-              },
-            "children" : [{
-                "nodeName" : "NODE NAME 3.3",
-                "name" : "NODE NAME 3.3",
-                "type" : "type1",
-                "code" : "N3.3",
-                "label" : "Node name 3.3",
-                "version" : "v1.0",
-                "link" : {
-                    "name" : "Link node 2.3 to 3.3",
-                    "nodeName" : "NODE NAME 3.3",
-                    "direction" : "ASYN"
-                  },
-                "children" : [{
-                    "nodeName" : "NODE NAME 4.1",
-                    "name" : "NODE NAME 4.1",
-                    "type" : "type4",
-                    "code" : "N4.1",
-                    "label" : "Node name 4.1",
-                    "version" : "v1.0",
-                    "link" : {
-                        "name" : "Link node 3.3 to 4.1",
-                        "nodeName" : "NODE NAME 4.1",
-                        "direction" : "SYNC"
-                      },
-                    "children" : []
-                  }
-                ]
-              }, {
-                "nodeName" : "NODE NAME 3.4",
-                "name" : "NODE NAME 3.4",
-                "type" : "type1",
-                "code" : "N3.4",
-                "label" : "Node name 3.4",
-                "version" : "v1.0",
-                "link" : {
-                    "name" : "Link node 2.3 to 3.4",
-                    "nodeName" : "NODE NAME 3.4",
-                    "direction" : "ASYN"
-                  },
-                "children" : [{
-                    "nodeName" : "NODE NAME 4.2",
-                    "name" : "NODE NAME 4.2",
-                    "type" : "type4",
-                    "code" : "N4.2",
-                    "label" : "Node name 4.2",
-                    "version" : "v1.0",
-                    "link" : {
-                        "name" : "Link node 3.4 to 4.2",
-                        "nodeName" : "NODE NAME 4.1",
-                        "direction" : "ASYN"
-                      },
-                    "children" : []
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-
-    let urlService_ = '';
+ 
     let TreeLayout: d3.TreeLayout<any>;
 	  let blue = '#337ab7';
 		let green = '#5cb85c';
@@ -171,8 +39,8 @@ export class TreeBoxesComponent implements OnInit {
 		// (after that the data are loaded)
     let root;
     let treeData;
-    let width = 800 - margin.right - margin.left;
-		let height = 400 - margin.top - margin.bottom;
+    let width = window.innerWidth - margin.right - margin.left;
+		let height = window.innerHeight - margin.top - margin.bottom;
     let  rectNode = { width : 120, height : 45, textMargin : 5 };
 		let tooltip = { width : 150, height : 40, textMargin : 5 };
 	  let  i = 0;
@@ -191,23 +59,7 @@ export class TreeBoxesComponent implements OnInit {
     let linkGroupToolTip: any;
     let defs: any;
     
-    let init = (urlService, data) => {
-      urlService_ = urlService;
-      if (urlService && urlService.length > 0)
-      {
-        if (urlService.charAt(urlService.length - 1) != '/')
-          urlService_ += '/';
-      }
-  
-      if (data)
-        drawTree(data);
-      else
-      {
-        console.error(data);
-        alert('Invalides data.');
-      }
-    }
-    let drawTree = (data) => {
+       let drawTree = (data) => {
 
       root = d3.hierarchy(data);
       TreeLayout = d3.tree().size([height, width]); 
@@ -252,7 +104,7 @@ export class TreeBoxesComponent implements OnInit {
       svgGroup = baseSvg.append('g')
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-     
+          
   
       // SVG elements under nodeGroupTooltip could be associated with nodeGroup,
       // same for linkGroupToolTip and linkGroup,
@@ -299,12 +151,14 @@ export class TreeBoxesComponent implements OnInit {
   // it is added at the top of the group, so it is drawed first
   // else the nodes tooltips are drawed before their children nodes and they
   // hide them
+  let click = this.functionalityService.click;
   var nodeEnter = node.enter().append('g')
   .attr('style', 'cursor: pointer')
   .attr('transform', d => 
 'translate(' + source['y0'] + ',' + source['x0'] + ')')
     .on('click', function(d) {
-        click(d);
+        let newD = click(d);
+        update(newD);
   });
 
 var nodeEnterTooltip = nodesTooltip.enter().append('g')
@@ -457,11 +311,11 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
     return '???';
   }
 
-  let moveToFront = (d) =>  {
-    return d.each(function(){
-        this.parentNode.appendChild(this);
-      });
-  };
+  // let moveToFront = (d) =>  {
+  //   return d.each(function(){
+  //       this.parentNode.appendChild(this);
+  //     });
+  // };
 
   // Enter any new links at the parent's previous position.
     // Enter any new links at the parent's previous position.
@@ -491,7 +345,7 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
     .on('mouseout', function(d) {
       d3.select(this).attr('marker-end', 'url(#end-arrow)');
       d3.select(this).attr('marker-start', linkMarkerStart(d['target']['data']['link']['direction'], false));
-      d3.select(this).attr('style', '	fill: none; stroke: lightsteelblue; stroke-width: 2px;');
+      d3.select(this).attr('style', 'fill: none; stroke: lightsteelblue; stroke-width: 2px;');
       $('#tooltipLinkID' + d['target']['id']).css('visibility', 'hidden');
       $('#tooltipLinkTextID' + d['target']['id']).css('visibility', 'hidden');
     });
@@ -541,7 +395,7 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
 
   // Transition links to their new position.
   var linkUpdate = link.merge(linkenter).transition().duration(duration)
-              .attr('d', function(d) {console.log(d); return diagonal(d); });
+              .attr('d', function(d) {return diagonal(d); });
 
   linkTooltip.transition().duration(duration)
          .attr('d', function(d) { return diagonal(d); });
@@ -580,16 +434,7 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
 // }
 
 // Toggle children on click.
-let click = (d) => {
-  if (d.children) {
-    d._children = d.children;
-    d.children = null;
-  } else {
-    d.children = d._children;
-    d._children = null;
-  }
-  update(d);
-}
+
 
 // Breadth-first traversal of the tree
 	// func function is processed on every node of a same level
@@ -763,7 +608,7 @@ let click = (d) => {
 		.append('path')
 		.attr('d', 'M10,-5L0,0L10,5');
 	}
-    init (urlService_, data);
+  drawTree(this.data);
     
 }
 }

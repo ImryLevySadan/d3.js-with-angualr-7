@@ -1,6 +1,6 @@
 <h1>Network Topologies</h1>
-  <label>Choose tour layout</label>
-  <form>
+  <label *ngIf="!url">Choose tour layout</label>
+  <form *ngIf="!url">
   <select (change)="onSelect($event)">
     <option *ngFor="let netWorkTopology of netWorkTopologies">
       {{netWorkTopology}}
@@ -10,10 +10,9 @@
 
 
 <graph [nodes]="netWorkType.nodes" [links]="netWorkType.links" *ngIf="simulation"></graph>
-<app-tidy-tree *ngIf="tidy"></app-tidy-tree>
-<app-force-directed-graph *ngIf="forceDirected"></app-force-directed-graph>
-<app-collapsible-tree-layout *ngIf="collapsiableTree"></app-collapsible-tree-layout>
-<app-force-dircted-tree *ngIf="forceDirectedTree"></app-force-dircted-tree>
-<app-collapsible-force *ngIf="collapsiable"></app-collapsible-force>
-<app-vertical-tree *ngIf="vertical"></app-vertical-tree>
-<app-tree-boxes *ngIf="treeBox"></app-tree-boxes>
+<app-force-directed-graph [data]="networkData" *ngIf="forceDirected"></app-force-directed-graph>
+<app-collapsible-tree-layout [data]="networkData" *ngIf="collapsiableTree"></app-collapsible-tree-layout>
+<app-force-dircted-tree [data]="networkData" *ngIf="forceDirectedTree"></app-force-dircted-tree>
+<app-collapsible-force [data]="networkData" *ngIf="collapsiable"></app-collapsible-force>
+<app-vertical-tree [data]="networkData" *ngIf="vertical"></app-vertical-tree>
+<app-tree-boxes [data]="networkData" *ngIf="treeBox"></app-tree-boxes>

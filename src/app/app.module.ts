@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GraphComponent } from './simulation-layout/visuals/graph/graph.component';
 import { NodeVisualComponent } from './simulation-layout/visuals/shared/node-visual/node-visual.component';
@@ -11,12 +10,10 @@ import { D3Service } from './simulation-layout/d3/d3.service';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { LineChartComponent } from './tree-layouts/line-chart/line-chart.component';
-import { TidyTreeComponent } from './tree-layouts/tidy-tree/tidy-tree.component';
-import { ForceDirectedGraphComponent } from './tree-layouts/force-directed-graph/force-directed-graph.component';
+import { ForceDirectedGraphComponent } from './force-directed-graph/force-directed-graph/force-directed-graph.component';
 import { CollapsibleTreeLayoutComponent } from './tree-layouts/collapsible-tree-layout/collapsible-tree-layout.component';
-import { ForceDirctedTreeComponent } from './tree-layouts/force-dircted-tree/force-dircted-tree.component';
-import { CollapsibleForceComponent } from './tree-layouts/collapsible-force/collapsible-force.component';
+import { ForceDirctedTreeComponent } from './force-directed-graph/force-dircted-tree/force-dircted-tree.component';
+import { CollapsibleForceComponent } from './force-directed-graph/collapsible-force/collapsible-force.component';
 import { VerticalTreeComponent } from './tree-layouts/vertical-tree/vertical-tree.component';
 import { TreeBoxesComponent } from './tree-layouts/tree-boxes/tree-boxes.component';
 
@@ -30,8 +27,6 @@ import { TreeBoxesComponent } from './tree-layouts/tree-boxes/tree-boxes.compone
     LinkVisualComponent,
     DraggableDirective,
     ZoomableDirective,
-    LineChartComponent,
-    TidyTreeComponent,
     ForceDirectedGraphComponent,
     CollapsibleTreeLayoutComponent,
     ForceDirctedTreeComponent,
@@ -41,7 +36,6 @@ import { TreeBoxesComponent } from './tree-layouts/tree-boxes/tree-boxes.compone
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     HttpClientModule,
     FormsModule,
     AngularSvgIconModule 

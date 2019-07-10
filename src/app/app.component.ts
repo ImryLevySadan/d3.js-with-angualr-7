@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as data from "src/app/simulation-layout/network-topologies-examples/01-simple-layout";
+import {DataLoaderService}  from '../app/services/data-loader.service';
 
 export interface Topologies {
   nodes: any;
@@ -17,98 +18,120 @@ export interface Topology {
   styleUrls: ['./app.component.css']
 })
 
+export class AppComponent implements OnInit {
 
-export class AppComponent  {
   netWorkType: Topology = {nodes: data.NODES, links: data.LINKS};
-  tidy: boolean = false;
   forceDirected: boolean = false;
   forceDirectedTree: boolean = false;
   collapsiable: boolean = false;
   collapsiableTree: boolean = false;
   simulation: boolean = false;
   vertical: boolean = false;
-  treeBox: boolean = false;
-  
-  
-  netWorkTopologies: string [] = ['Simple Network', 'Few Access Points netwoork', 'Multi Switches Network', "Tidy tree", "Force directed graph", "Force directed tree", "Collapsiable", "Collapsiable Tree", "Vertical tree", "Tree box"];
+  treeBox: boolean = false;  
+  netWorkTopologies: string [] = ['Simple Network', 'Few Access Points netwoork', 'Multi Switches Network', "Force directed graph", "Force directed tree", "Collapsiable Tree", "Vertical tree", "Tree box"];
+  networkData: any;
+  configurationData: any;
+  url: string;
+ 
+
+  constructor(private dataLoader: DataLoaderService) {}
+
+  ngOnInit () {
+    console.log(this.networkData)
+    if (this.url)
+      {this.networkData  = this.dataLoader.getServerJsonData(this.url);
+      this.configurationData = this.dataLoader.getConfigurationData(this.url);
+      this.onSelect(this.configurationData);
+      }
+    }
 
   onSelect(event){
-   
-    switch (event.target.value) {
+   let value = event.target.value;
+    switch (value) {
          case "Simple Network":
-            this.simulation = true;
-            this.netWorkType.nodes = data.NODES;
-            this.netWorkType.links = data.LINKS;
+          this.simulation = true;
+          this.forceDirected = false;
+          this.forceDirectedTree = false;
+          this.collapsiable = false;
+          this.collapsiableTree = false;
+          this.vertical = false;
+          this.treeBox = false;
+          this.netWorkType.nodes = data.NODES;
+          this.netWorkType.links = data.LINKS;
             break;
         case "Few Access Points netwoork":
             this.simulation = true;
+            this.forceDirected = false;
+            this.forceDirectedTree = false;
+            this.collapsiable = false;
+            this.collapsiableTree = false;
+            this.vertical = false;
+            this.treeBox = false;
             this.netWorkType.nodes = data.NODES1;
             this.netWorkType.links = data.LINKS1;
             break;
         case "Multi Switches Network":
             this.simulation = true;
+            this.forceDirected = false;
+            this.forceDirectedTree = false;
+            this.collapsiable = false;
+            this.collapsiableTree = false;
+            this.vertical = false;
+            this.treeBox = false;
             this.netWorkType.nodes = data.NODES2;
             this.netWorkType.links = data.LINKS2;
             break;
-        case "Tidy tree":
-              this.tidy = true;
-              this.forceDirected = false;
-              this.forceDirectedTree = false;
-              this.collapsiable = false;
-              this.collapsiableTree = false;
-              this.simulation = false;
-              break;
         case "Force directed graph":
-                this.tidy = false;
-                this.forceDirected = true;
-                this.forceDirectedTree = false;
-                this.collapsiable = false;
-                this.collapsiableTree = false;
-                this.simulation = false;
+          this.networkData = this.dataLoader.getJson(value);
+          this.forceDirected = true;
+          this.forceDirectedTree = false;
+          this.collapsiable = false;
+          this.collapsiableTree = false;
+          this.simulation = false;
+          this.vertical = false;
+          this.treeBox = false;
                 break;
             case "Force directed tree":
-                  this.tidy = false;
-                  this.forceDirected = false;
-                  this.forceDirectedTree = true;
-                  this.collapsiable = false;
-                  this.collapsiableTree = false;
-                  this.simulation = false;
+              this.networkData = this.dataLoader.getJson(value);
+              this.forceDirected = false;
+              this.forceDirectedTree = true;
+              this.collapsiable = false;
+              this.collapsiableTree = false;
+              this.simulation = false;
+              this.vertical = false;
+              this.treeBox = false;
                     break;
-          case "Collapsiable":
-              this.tidy = false;
-              this.forceDirected = false;
-              this.forceDirectedTree = false;
-              this.collapsiable = true;
-              this.collapsiableTree = false;
-              this.simulation = false;
-              break;
+          // case "Collapsiable":
+          //   this.forceDirected = false;
+          //   this.forceDirectedTree = false;
+          //   this.collapsiable = true;
+          //   this.collapsiableTree = false;
+          //   this.simulation = false;
+          //   this.vertical = false;
+          //   this.treeBox = false;
+          //     break;
           case "Collapsiable Tree":
-              this.tidy = false;
-              this.forceDirected = false;
-              this.forceDirectedTree = false;
-              this.collapsiable = false;
-              this.collapsiableTree = true;
-              this.simulation = false;
-              break;
-          case "Stick force layout":
-              this.tidy = false;
-              this.forceDirected = false;
-              this.forceDirectedTree = false;
-              this.collapsiable = false;
-              this.collapsiableTree = false;
-              this.simulation = false;
+            this.networkData = this.dataLoader.getJson(value);
+            this.forceDirected = false;
+            this.forceDirectedTree = false;
+            this.collapsiable = false;
+            this.collapsiableTree = true;
+            this.simulation = false;
+            this.vertical = false;
+            this.treeBox = false;
               break;
           case "Vertical tree":
-              this.tidy = false;
-              this.forceDirected = false;
-              this.forceDirectedTree = false;
-              this.collapsiable = false;
-              this.collapsiableTree = false;
-              this.simulation = false;
-              this.vertical = true;
+            this.networkData = this.dataLoader.getJson(value);
+            this.forceDirected = false;
+            this.forceDirectedTree = false;
+            this.collapsiable = false;
+            this.collapsiableTree = false;
+            this.simulation = false;
+            this.vertical = true;
+            this.treeBox = false;
               break;
           case "Tree box":
-              this.tidy = false;
+              this.networkData = this.dataLoader.getJson(value);
               this.forceDirected = false;
               this.forceDirectedTree = false;
               this.collapsiable = false;

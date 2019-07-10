@@ -1,5 +1,5 @@
 //SOURCE: https://codepen.io/rjvim/pen/rYGzja?editors=0010
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import * as d3 from 'd3';
 
 @Component({
@@ -8,33 +8,15 @@ import * as d3 from 'd3';
   styleUrls: ['./vertical-tree.component.css']
 })
 export class VerticalTreeComponent implements OnInit {
+@Input('data') data;
+
 d3: d3.TreeLayout<any>;
 duration:number = 750;
 i: number = 0;
 
   ngOnInit() {
 
-    let treeData =
-    {
-      "name": "Top Level",
-      "children": [
-        { 
-          "name": "Level 2: A",
-          "children": [
-            { "name": "Son of A" },
-            { "name": "Daughter of A" }
-          ]
-        },
-        { "name": "Level 2: B",
-          "children": [
-            { "name": "Son of A" },
-            { "name": "Daughter of A" }
-          ] 
-        }
-      ]
-    };
-
-    let draw = (source) => {
+      let draw = (source) => {
       let margin = {top: 20, right: 20, bottom: 30, left: 20};
       let width = 960 - margin.left - margin.right + 400;
       let height = 500 - margin.top - margin.bottom;
@@ -156,13 +138,13 @@ i: number = 0;
           d._children = null;
         }
       // If d has a parent, collapse other children of that parent
-      if (d.parent) {
-        d.parent.children.forEach(function(element) {
-          if (d !== element) {
-            collapse(element);
-          }
-        });
-      }
+      // if (d.parent) {
+      //   d.parent.children.forEach(function(element) {
+      //     if (d !== element) {
+      //       collapse(element);
+      //     }
+      //   });
+      // }
     
       draw(d);
       }
@@ -196,11 +178,11 @@ let g = svg.append("g")
 
     let root;
 
-    root = d3.hierarchy(treeData);
+    root = d3.hierarchy(this.data);
     root.x0 = 0;
     root.y0 = width / 3;
     
-   root.children.forEach(d=> collapse(d));
+  //  root.children.forEach(d=> collapse(d));
    draw(root);
   }
   
