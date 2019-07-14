@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
+import * as d3 from 'd3';
+
 
 @Injectable({
   providedIn: 'root'
 })
-export class FunctionalityServicsService {
+export class FunctionalityService {
 
   constructor() { }
 
@@ -16,5 +18,30 @@ export class FunctionalityServicsService {
       d._children = null;
     }
     return d;
+  }
+
+  public drag = simulation => {
+  
+    function dragstarted(d) {
+      if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+    
+    function dragged(d) {
+      d.fx = d3.event.x;
+      d.fy = d3.event.y;
+    }
+    
+    function dragended(d) {
+      if (!d3.event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+    
+    return d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended);
   }
 }

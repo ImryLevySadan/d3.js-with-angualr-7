@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import * as data from "src/app/simulation-layout/d3/models/network-mocekd-json";
+import * as data from "src/app/layouts/simulation-layout/d3/models/network-mocekd-json";
 import {DataLoaderService}  from '../app/services/data-loader.service';
 
 export interface Topologies {

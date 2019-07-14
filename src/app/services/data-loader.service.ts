@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import * as graphData from "src/app/simulation-layout/d3/models/network-mocekd-json";
+import * as graphData from "src/app/layouts/simulation-layout/d3/models/network-mocekd-json";
 import * as arrayToTree from 'array-to-tree';
 
 
@@ -24,6 +24,35 @@ export class DataLoaderService {
   
   public getJson()  {
     const data = {nodes: graphData.NODES2, links: graphData.LINKS2};
+    data.nodes.forEach(node => {
+      let value = node.type;
+      let blue = '#337ab7';
+      let green = '#5cb85c';
+      let yellow = '#f0ad4e';
+      let blueText = '#4ab1eb';
+      let purple = '#9467bd';
+      switch (value) {
+        case "access-point": 
+        node.iconPath = "/assets/icon-images/access-point.png";
+        node.color = green;
+        break;
+        case "router": 
+        node.iconPath = "/assets/icon-images/router.png";
+        node.color = blue;
+        break;
+        case "switch": 
+        node.iconPath = "/assets/icon-images/switch.png";
+        node.color = yellow
+        break;
+        case "www": 
+        node.iconPath = "/assets/icon-images/www.png";
+        node.color = purple;
+        break;
+        default:
+          break;
+      }
+      
+    });
     return data;
   }
 
