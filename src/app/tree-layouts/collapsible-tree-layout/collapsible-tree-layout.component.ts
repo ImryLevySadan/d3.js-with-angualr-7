@@ -2,6 +2,8 @@
 
 import { Component, OnInit, Input } from '@angular/core';
 import * as d3 from "d3";
+import {DataLoaderService} from 'src/app/services/data-loader.service';
+
 
 @Component({
   selector: 'app-collapsible-tree-layout',
@@ -12,7 +14,7 @@ export class CollapsibleTreeLayoutComponent implements OnInit {
 d3: d3.TreeLayout<any>;
 @Input('data') data;
 
-  constructor() { }
+constructor(private dataLoaderService:DataLoaderService) {}
 
   ngOnInit() {
  
@@ -21,17 +23,17 @@ d3: d3.TreeLayout<any>;
     let dx = 10;
     let margin = {top: 10, right: 120, bottom: 10, left: 40}
    
-   
-  let root = d3.hierarchy(this.data);
+  let root = <any>this.dataLoaderService.findRoot(this.data.nodes, this.data.links)
+
+  root = d3.hierarchy(root[0]);
   root['fixed'] = true;
   root['x0'] = dy / 2;
   root['y0'] = 100;
 
-  
   root.descendants().forEach((d, i) => {
     d.id = <any>i;
-    d['_children'] = d.children;
-    if (d.depth && d.data.name.length !== 7) d.children = null;
+    d['_children'] = d['children'];
+    
   });
         
   const svg = d3.select("#container").append("svg")
@@ -52,12 +54,15 @@ d3: d3.TreeLayout<any>;
     
   function update(source) {
     const duration = d3.event && d3.event.altKey ? 2500 : 250;
+    let TreeLayout = d3.tree().nodeSize([dx, dy]);
+    let treeData = TreeLayout(root);
     const nodes = root.descendants().reverse();
     const links = root.links();
+    // let nodes = treeData.descendants();
+    // let links = treeData.descendants().slice(1);
     
     // Compute the new tree layout.
-    let TreeLayout = d3.tree().nodeSize([dx, dy]);
-    TreeLayout(root);
+
 
     let left = root;
     let right = root;
@@ -83,7 +88,7 @@ d3: d3.TreeLayout<any>;
         .attr("fill-opacity", 0)
         .attr("stroke-opacity", 0)
         .on("click", d => {
-          d.children = d.children ? null : d['_children'];
+          d['children'] = d['children'] ? null : d['_children'];
           update(d);
         });
 
@@ -96,7 +101,7 @@ d3: d3.TreeLayout<any>;
         .attr("dy", "0.31em")
         .attr("x", d => d['_children'] ? -6 : 6)
         .attr("text-anchor", d => d['_children'] ? "end" : "start")
-        .text(d => d.data.name)
+        .text(d => d['data']['type'])
       .clone(true).lower()
         .attr("stroke-linejoin", "round")
         .attr("stroke-width", 3)
@@ -149,7 +154,4 @@ d3: d3.TreeLayout<any>;
 
   }
  
-
- 
-
 }

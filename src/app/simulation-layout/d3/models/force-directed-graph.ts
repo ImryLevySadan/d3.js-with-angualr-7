@@ -14,11 +14,8 @@ import * as d3 from 'd3';
 export class ForceDirectedGraph {
   public ticker: EventEmitter<d3.Simulation<Node, Link>> = new EventEmitter();
   public simulation: d3.Simulation<any, any>;
-  public svg: any;
-
   public nodes: Node[] = [];
   public links: Link[] = [];
-  public options: { width, height} ;
 
   constructor(nodes, links, options: { width, height }) {
     this.nodes = nodes;

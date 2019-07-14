@@ -1,6 +1,7 @@
 //SOURCE: https://codepen.io/rjvim/pen/rYGzja?editors=0010
 import { Component, OnInit, Input } from '@angular/core';
 import * as d3 from 'd3';
+import {DataLoaderService} from 'src/app/services/data-loader.service';
 
 @Component({
   selector: 'app-vertical-tree',
@@ -14,6 +15,9 @@ d3: d3.TreeLayout<any>;
 duration:number = 750;
 i: number = 0;
 
+constructor(private dataLoaderService:DataLoaderService) {
+  
+}
   ngOnInit() {
 
       let draw = (source) => {
@@ -53,7 +57,8 @@ i: number = 0;
     .attr("x", d =>
         d.children || d['_children']? -13 : 13)
     .attr("text-anchor", d => d.children || d['_children']? "end" : "start")
-    .text(d => d.data['name']);
+    .text(d =>  d.data['type'] + ' in:' + d.data['label']);
+      
   
     let nodeUpdate = nodeEnter.merge(<any>node);
     
@@ -177,8 +182,9 @@ let g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     let root;
+    root = this.dataLoaderService.findRoot(this.data.nodes, this.data.links)
 
-    root = d3.hierarchy(this.data);
+    root = d3.hierarchy(root[0]);
     root.x0 = 0;
     root.y0 = width / 3;
     

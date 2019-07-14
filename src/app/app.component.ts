@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import * as data from "src/app/simulation-layout/network-topologies-examples/01-simple-layout";
+import * as data from "src/app/simulation-layout/d3/models/network-mocekd-json";
 import {DataLoaderService}  from '../app/services/data-loader.service';
 
 export interface Topologies {
@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
   simulation: boolean = false;
   vertical: boolean = false;
   treeBox: boolean = false;  
-  netWorkTopologies: string [] = ['Simple Network', 'Few Access Points netwoork', 'Multi Switches Network', "Force directed graph", "Force directed tree", "Collapsiable Tree", "Vertical tree", "Tree box"];
+  netWorkTopologies: string [] = ['Force dircted Simulation', "Force directed graph", "Force directed tree", "Collapsiable Tree", "Vertical tree", "Tree box"];
   networkData: any;
   configurationData: any;
   url: string;
@@ -37,7 +37,6 @@ export class AppComponent implements OnInit {
   constructor(private dataLoader: DataLoaderService) {}
 
   ngOnInit () {
-    console.log(this.networkData)
     if (this.url)
       {this.networkData  = this.dataLoader.getServerJsonData(this.url);
       this.configurationData = this.dataLoader.getConfigurationData(this.url);
@@ -48,18 +47,7 @@ export class AppComponent implements OnInit {
   onSelect(event){
    let value = event.target.value;
     switch (value) {
-         case "Simple Network":
-          this.simulation = true;
-          this.forceDirected = false;
-          this.forceDirectedTree = false;
-          this.collapsiable = false;
-          this.collapsiableTree = false;
-          this.vertical = false;
-          this.treeBox = false;
-          this.netWorkType.nodes = data.NODES;
-          this.netWorkType.links = data.LINKS;
-            break;
-        case "Few Access Points netwoork":
+        case "Force dircted Simulation":
             this.simulation = true;
             this.forceDirected = false;
             this.forceDirectedTree = false;
@@ -67,22 +55,10 @@ export class AppComponent implements OnInit {
             this.collapsiableTree = false;
             this.vertical = false;
             this.treeBox = false;
-            this.netWorkType.nodes = data.NODES1;
-            this.netWorkType.links = data.LINKS1;
-            break;
-        case "Multi Switches Network":
-            this.simulation = true;
-            this.forceDirected = false;
-            this.forceDirectedTree = false;
-            this.collapsiable = false;
-            this.collapsiableTree = false;
-            this.vertical = false;
-            this.treeBox = false;
-            this.netWorkType.nodes = data.NODES2;
-            this.netWorkType.links = data.LINKS2;
+            this.netWorkType = this.dataLoader.getJson();
             break;
         case "Force directed graph":
-          this.networkData = this.dataLoader.getJson(value);
+          this.networkData = this.dataLoader.getJson();
           this.forceDirected = true;
           this.forceDirectedTree = false;
           this.collapsiable = false;
@@ -92,7 +68,7 @@ export class AppComponent implements OnInit {
           this.treeBox = false;
                 break;
             case "Force directed tree":
-              this.networkData = this.dataLoader.getJson(value);
+              this.networkData = this.dataLoader.getJson();
               this.forceDirected = false;
               this.forceDirectedTree = true;
               this.collapsiable = false;
@@ -101,17 +77,8 @@ export class AppComponent implements OnInit {
               this.vertical = false;
               this.treeBox = false;
                     break;
-          // case "Collapsiable":
-          //   this.forceDirected = false;
-          //   this.forceDirectedTree = false;
-          //   this.collapsiable = true;
-          //   this.collapsiableTree = false;
-          //   this.simulation = false;
-          //   this.vertical = false;
-          //   this.treeBox = false;
-          //     break;
           case "Collapsiable Tree":
-            this.networkData = this.dataLoader.getJson(value);
+            this.networkData = this.dataLoader.getJson();
             this.forceDirected = false;
             this.forceDirectedTree = false;
             this.collapsiable = false;
@@ -121,7 +88,7 @@ export class AppComponent implements OnInit {
             this.treeBox = false;
               break;
           case "Vertical tree":
-            this.networkData = this.dataLoader.getJson(value);
+            this.networkData = this.dataLoader.getJson();
             this.forceDirected = false;
             this.forceDirectedTree = false;
             this.collapsiable = false;
@@ -131,7 +98,7 @@ export class AppComponent implements OnInit {
             this.treeBox = false;
               break;
           case "Tree box":
-              this.networkData = this.dataLoader.getJson(value);
+              this.networkData = this.dataLoader.getJson();
               this.forceDirected = false;
               this.forceDirectedTree = false;
               this.collapsiable = false;

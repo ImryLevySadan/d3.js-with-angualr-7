@@ -13,7 +13,6 @@ import { FormsModule } from '@angular/forms';
 import { ForceDirectedGraphComponent } from './force-directed-graph/force-directed-graph/force-directed-graph.component';
 import { CollapsibleTreeLayoutComponent } from './tree-layouts/collapsible-tree-layout/collapsible-tree-layout.component';
 import { ForceDirctedTreeComponent } from './force-directed-graph/force-dircted-tree/force-dircted-tree.component';
-import { CollapsibleForceComponent } from './force-directed-graph/collapsible-force/collapsible-force.component';
 import { VerticalTreeComponent } from './tree-layouts/vertical-tree/vertical-tree.component';
 import { TreeBoxesComponent } from './tree-layouts/tree-boxes/tree-boxes.component';
 
@@ -30,7 +29,6 @@ import { TreeBoxesComponent } from './tree-layouts/tree-boxes/tree-boxes.compone
     ForceDirectedGraphComponent,
     CollapsibleTreeLayoutComponent,
     ForceDirctedTreeComponent,
-    CollapsibleForceComponent,
     VerticalTreeComponent,
     TreeBoxesComponent        
   ],

@@ -35,7 +35,7 @@ constructor() {}
       .selectAll("line")
       .data(links)
       .join("line")
-        .attr("stroke-width", d => Math.sqrt(d['value']));
+        .attr("stroke-width", d => Math.sqrt(2.1));
   
     let node = svg.append("g")
         .attr("stroke", "#fff")
@@ -64,7 +64,7 @@ constructor() {}
 
   initColor(){
     const scale = d3.scaleOrdinal(d3.schemeCategory10);
-    return d => scale(d.group);
+    return d => scale(d.type);
   }
   drag = simulation => {
     

@@ -4,6 +4,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 import {FunctionalityServicsService} from 'src/app/services/functionality-servics.service';
+import {DataLoaderService} from 'src/app/services/data-loader.service'
+
 
 
 @Component({
@@ -12,11 +14,13 @@ import {FunctionalityServicsService} from 'src/app/services/functionality-servic
   styleUrls: ['./tree-boxes.component.css']
 })
 export class TreeBoxesComponent implements OnInit {
-  d3: d3.TreeLayout<any>;
+  public d3: d3.TreeLayout<any>;
   @Input('data') data;
+  root: any;
+  
 
 
-constructor(private functionalityService: FunctionalityServicsService) {
+constructor(private functionalityService: FunctionalityServicsService, private dataLoaderService: DataLoaderService) {
   
 }
   ngOnInit() {
@@ -59,25 +63,26 @@ constructor(private functionalityService: FunctionalityServicsService) {
     let linkGroupToolTip: any;
     let defs: any;
     
-       let drawTree = (data) => {
-
-      root = d3.hierarchy(data);
+    let drawTree = (data) => {
+      let rootNode = this.dataLoaderService.findRoot(this.data.nodes, this.data.links)
+      this.root = d3.hierarchy(rootNode[0]);
       TreeLayout = d3.tree().size([height, width]); 
 
       // Dynamically set the height of the main svg container
       // breadthFirstTraversal returns the max number of node on a same level
       // and colors the nodes
       var maxDepth = 0;
-      var maxTreeWidth = breadthFirstTraversal(TreeLayout(root).descendants(), function(currentLevel) {
+        
+      var maxTreeWidth = breadthFirstTraversal(TreeLayout(this.root).descendants(), function(currentLevel) {
         maxDepth++;
         currentLevel.forEach(function(node) {
-          if (node.data.type == 'type1')
+          if (node.data.type == 'router')
             node.color = blue;
-          if (node.data.type == 'type2')
+          if (node.data.type == 'access-point')
             node.color = green;
-          if (node.data.type == 'type3')
+          if (node.data.type == 'switch')
             node.color = yellow;
-          if (node.data.type == 'type4')
+          if (node.data.type == 'www')
             node.color = purple;
           });
         });
@@ -85,9 +90,9 @@ constructor(private functionalityService: FunctionalityServicsService) {
         width = maxDepth * (rectNode.width * 1.5) + tooltip.width / 2 - margin.top - margin.bottom;
         
       TreeLayout = d3.tree().size([height, width]); 
-      treeData = TreeLayout(root);
-      root['x0'] = height / 2;
-      root['y0'] = 0; 
+      treeData = TreeLayout(this.root);
+      this.root['x0'] = height / 2;
+      this.root['y0'] = 0; 
 
      
       baseSvg = d3.select('#tree-container').append('svg')
@@ -127,8 +132,8 @@ constructor(private functionalityService: FunctionalityServicsService) {
 
     let update  = (source) => {
   // Compute the new tree layout
-  let nodes = treeData.descendants().reverse();
-  let links = treeData.links();
+  let nodes = treeData.descendants();
+  let links = treeData.links(nodes);
 
   // Check if two nodes are in collision on the ordinates axe and move them
   breadthFirstTraversal(treeData.descendants(), collision);
@@ -190,9 +195,9 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
         var html =  '<div style="width: '
             + (rectNode.width - rectNode.textMargin * 2) + 'px; height: '
             + (rectNode.height - rectNode.textMargin * 2) + 'px; color: white; font: 7px sans-serif">'
-            + '<b>' + d['data']['nodeName'] + '</b><br><br>'
-            + '<b>Code: </b>' + d['data']['code'] + '<br>'
-            + '<b>Version: </b>' + d['data']['version'] + '<br>'
+            + '<b>' + d['data']['type'] + '</b><br><br>'
+            + '<b>Label: </b>' + d['data']['label'] + '<br>'
+            + '<b>Serial Number: </b>' + d['data']['serialNumber'] + '<br>'
             + '</div>';
             return html;
       })
@@ -244,7 +249,7 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
   .attr("display", "block")
   .attr("style", "padding: 5px")
   .append("tspan")
-    .text(function(d) {return 'Name: ' + d['data']['name'];})
+    .text(function(d) {return 'ID: ' + d['data']['id'];})
     .append("tspan")
     .attr('x', rectNode.width / 2 + tooltip.textMargin)
     .attr('dy', '1.5em')
@@ -289,23 +294,23 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
     return d;
   });
   var linkTooltip = linkGroupToolTip.selectAll('g').data(links, function(d) {
-    return d['target']['id'];
+    return d['id'];
   });
 
-  function linkMarkerStart(direction, isSelected) {
-    if (direction == 'SYNC')
+  function linkMarkerStart(status, isSelected) {
+    if (status == 'SYNC')
     {
       return isSelected ? 'url(#start-arrow-selected)' : 'url(#start-arrow)';
     }
     return '';
   }
 
-  function linkType(link) {
-    if (link.direction == 'SYNC')
+  function linkType(status) {
+    if (status == 'SYNC')
       return "Synchronous [\u2194]";
     else
     {
-      if (link.direction == 'ASYN')
+      if (status == 'ASYN')
         return "Asynchronous [\u2192]";
     }
     return '???';
@@ -324,17 +329,16 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
     .attr("stroke", "lightsteelblue")
     .attr("stroke-width", "2px") 
     .attr('id', function(d) { 
-      return 'linkID' + d['target']['id']; })
+      return 'linkID' + d['id']; })
     .attr('d', function(d) { 
       return diagonal(d); })
     .attr('marker-end', 'url(#end-arrow)')
     .attr('marker-start', function(d) { 
-      return linkMarkerStart(d['target']['data']['link']['direction'], false); })
+      return linkMarkerStart('SYNC', false); })
     .on('mouseover', function(d) {
       // d3.select(this).moveToFront();
-
       d3.select(this).attr('marker-end', 'url(#end-arrow-selected)');
-      d3.select(this).attr('marker-start', linkMarkerStart(d['target']['data']['link']['direction'], true));
+      d3.select(this).attr('marker-start', linkMarkerStart('SYNC', true));
       d3.select(this).attr('style', 'fill: none; stroke: tomato; stroke-width: 2px;');
 
       $('#tooltipLinkID' + d['target']['id']).attr('x', (d['target']['y'] + rectNode.width - d['source']['y']) / 2 + d['source']['y']);
@@ -344,7 +348,7 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
     })
     .on('mouseout', function(d) {
       d3.select(this).attr('marker-end', 'url(#end-arrow)');
-      d3.select(this).attr('marker-start', linkMarkerStart(d['target']['data']['link']['direction'], false));
+      d3.select(this).attr('marker-start', linkMarkerStart('SYNC', false));
       d3.select(this).attr('style', 'fill: none; stroke: lightsteelblue; stroke-width: 2px;');
       $('#tooltipLinkID' + d['target']['id']).css('visibility', 'hidden');
       $('#tooltipLinkTextID' + d['target']['id']).css('visibility', 'hidden');
@@ -364,7 +368,7 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
       // After selected a link, the cursor can be hover the tooltip, that's why we still need to highlight the link and the arrow
       $('#linkID' + d['target']['id']).attr('style', 'fill: none; stroke: tomato; stroke-width: 2px;');
       $('#linkID' + d['target']['id']).attr('marker-end', 'url(#end-arrow-selected)');
-      $('#linkID' + d['target']['id']).attr('marker-start', linkMarkerStart(d['target']['data']['link']['direction'], true));
+      $('#linkID' + d['target']['id']).attr('marker-start', linkMarkerStart('SYNC', true));
 
       removeMouseEvents();
     })
@@ -373,7 +377,7 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
       $('#tooltipLinkTextID' + d.target.id).css('visibility', 'hidden');
       $('#linkID' + d.target.id).attr('class', 'link');
       $('#linkID' + d.target.id).attr('marker-end', 'url(#end-arrow)');
-      $('#linkID' + d.target.id).attr('marker-start', linkMarkerStart(d.target.data.link.direction, false));
+      $('#linkID' + d.target.id).attr('marker-start', linkMarkerStart('SYNC', false));
 
       reactivateMouseEvents();
     });
@@ -387,11 +391,11 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
     .attr('height', tooltip.height)
     .style('fill', 'white')
     .append("tspan")
-       .text(function(d) { return linkType(d['target']['data']['link']); })
+       .text(function(d) { return linkType("SYNC"); })
        .append("tspan")
       .attr('x', function(d) { return (d['target']['y'] + rectNode.width - d['source']['y']) / 2 + d['source']['y'] + tooltip.textMargin; })
        .attr('dy', '1.5em')
-      .text(function(d) { return d['target']['data']['link']['name'];});
+      .text(function(d) { return "working..."});
 
   // Transition links to their new position.
   var linkUpdate = link.merge(linkenter).transition().duration(duration)
