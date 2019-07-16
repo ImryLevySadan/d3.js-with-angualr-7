@@ -2,6 +2,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import * as d3 from 'd3';
 import {DataLoaderService} from 'src/app/services/data-loader.service';
+import {FunctionalityService} from 'src/app/services/functionality.service';
 
 @Component({
   selector: 'app-vertical-tree',
@@ -9,13 +10,13 @@ import {DataLoaderService} from 'src/app/services/data-loader.service';
   styleUrls: ['./vertical-tree.component.css']
 })
 export class VerticalTreeComponent implements OnInit {
-@Input('data') data;
+  @Input('data') data;
 
 d3: d3.TreeLayout<any>;
 duration:number = 750;
 i: number = 0;
 
-constructor(private dataLoaderService:DataLoaderService) {
+constructor(private dataLoaderService:DataLoaderService, private functionalityService: FunctionalityService) {
   
 }
   ngOnInit() {
@@ -41,7 +42,7 @@ constructor(private dataLoaderService:DataLoaderService) {
     .attr('class', 'node')
     .attr("style", "cursor: pointer")
     .attr("transform", d=> "translate(" + source.x0 + "," + source.y0 + ")")
-    .on('click',d=> click(d));
+    .on('click',d=> draw(this.functionalityService.click(d)));
   
   
     nodeEnter.append('circle')
@@ -133,26 +134,7 @@ constructor(private dataLoaderService:DataLoaderService) {
         d.children = null
      };
     }
-    let click = (d) =>
-    {
-      if (d.children) {
-          d._children = d.children;
-          d.children = null;
-        } else {
-          d.children = d._children;
-          d._children = null;
-        }
-      // If d has a parent, collapse other children of that parent
-      // if (d.parent) {
-      //   d.parent.children.forEach(function(element) {
-      //     if (d !== element) {
-      //       collapse(element);
-      //     }
-      //   });
-      // }
-    
-      draw(d);
-      }
+   
   
       let diagonal = (s, d) => {
     
@@ -176,8 +158,7 @@ let g = svg.append("g")
 
     let root;
     root = this.dataLoaderService.findRoot(this.data.nodes, this.data.links)
-
-    root = d3.hierarchy(root[0]);
+    root = d3.hierarchy(root);
     root.x0 = 0;
     root.y0 = width / 3;
     

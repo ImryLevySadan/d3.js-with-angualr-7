@@ -9,9 +9,10 @@
 </form>
 
 
-<graph [nodes]="netWorkType.nodes" [links]="netWorkType.links" *ngIf="simulation"></graph>
+<graph [data]="networkData" *ngIf="simulation"></graph>
 <app-force-directed-graph [data]="networkData" *ngIf="forceDirected"></app-force-directed-graph>
-<app-collapsible-tree-layout [data]="networkData" *ngIf="collapsiableTree"></app-collapsible-tree-layout>
 <app-force-dircted-tree [data]="networkData" *ngIf="forceDirectedTree"></app-force-dircted-tree>
+<app-collapsible-tree-layout  [data]="networkData" *ngIf="collapsiableTree"></app-collapsible-tree-layout>
 <app-vertical-tree [data]="networkData" *ngIf="vertical"></app-vertical-tree>
 <app-tree-boxes [data]="networkData" *ngIf="treeBox"></app-tree-boxes>
+<app-network-topology-layouts [data]="networkData" [configurationData]="configurationData" *ngIf="networkLayout"></app-network-topology-layouts>

@@ -3,7 +3,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import * as d3 from 'd3';
 import {DataLoaderService} from 'src/app/services/data-loader.service'
-import {FunctionalityService} from 'src/app/services/functionality-servics.service'
+import {FunctionalityService} from 'src/app/services/functionality.service'
 
 @Component({
   selector: 'app-force-dircted-tree',
@@ -11,15 +11,15 @@ import {FunctionalityService} from 'src/app/services/functionality-servics.servi
   styleUrls: ['./force-dircted-tree.component.css']
 })
 export class ForceDirctedTreeComponent implements OnInit {
-d3: d3.Simulation<any,any>;
-@Input('data') data;
-root: any;
+  @Input('data') data;
+
+  d3: d3.Simulation<any,any>;
+  root: any;
+
 
 constructor(private dataLoaderService: DataLoaderService, private functionalityService: FunctionalityService) {}
   ngOnInit() {
-  //NOTICE: The data structure is hierarchy
-  this.root = this.dataLoaderService.findRoot(this.data.nodes, this.data.links)
-  this.root = this.dataLoaderService.createTree(this.root, this.data.nodes, this.data.links)
+  this.root = <any>this.dataLoaderService.findRoot(this.data.nodes, this.data.links)
   this.root = d3.hierarchy(this.root);
   const links = this.data.links;
   const nodes = this.data.nodes;
@@ -27,8 +27,7 @@ constructor(private dataLoaderService: DataLoaderService, private functionalityS
   const height = window.innerHeight;
 
   const simulation = d3.forceSimulation(<any>nodes)
-      .force("link", d3.forceLink(<any>links).id(d => {
-        return d['id']}).distance(0).strength(1))
+      .force("link", d3.forceLink(<any>links).id(d => d['id']).distance(0).strength(1))
       .force("charge", d3.forceManyBody().strength(-50))
       .force("x", d3.forceX())
       .force("y", d3.forceY());
@@ -38,7 +37,7 @@ constructor(private dataLoaderService: DataLoaderService, private functionalityS
 
   const link = svg.append("g")
       .attr("stroke", "#999")
-      .attr("stroke-opacity", 0.6)
+      .attr("stroke-opacity", 1.6)
     .selectAll("line")
     .data(links)
     .join("line");

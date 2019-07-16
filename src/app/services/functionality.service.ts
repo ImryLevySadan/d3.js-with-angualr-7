@@ -44,4 +44,11 @@ export class FunctionalityService {
         .on("drag", dragged)
         .on("end", dragended);
   }
+
+  public zoomed  = () => {
+    let transform = d3.event.transform;
+    let g = d3.select("g")
+    return g.attr('transform', 'translate(' + transform.x + ',' + transform.y + ') scale(' + transform.k + ')')
+  }
+
 }

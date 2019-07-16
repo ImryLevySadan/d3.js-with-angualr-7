@@ -3,6 +3,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import * as d3 from "d3";
 import {DataLoaderService} from 'src/app/services/data-loader.service';
+import {FunctionalityService} from 'src/app/services/functionality.service';
+
 
 
 @Component({
@@ -11,10 +13,11 @@ import {DataLoaderService} from 'src/app/services/data-loader.service';
   styleUrls: ['./collapsible-tree-layout.component.css']
 })
 export class CollapsibleTreeLayoutComponent implements OnInit {
+  @Input('data') data;
 d3: d3.TreeLayout<any>;
-@Input('data') data;
 
-constructor(private dataLoaderService:DataLoaderService) {}
+
+constructor(private dataLoaderService:DataLoaderService, private functionalityService: FunctionalityService) {}
 
   ngOnInit() {
  
@@ -25,7 +28,7 @@ constructor(private dataLoaderService:DataLoaderService) {}
    
   let root = <any>this.dataLoaderService.findRoot(this.data.nodes, this.data.links)
 
-  root = d3.hierarchy(root[0]);
+  root = d3.hierarchy(root);
   root['fixed'] = true;
   root['x0'] = dy / 2;
   root['y0'] = 100;
@@ -40,7 +43,7 @@ constructor(private dataLoaderService:DataLoaderService) {}
       .attr("viewBox", <any>[-margin.left, -margin.top, width, dx])
       .style("font", "10px sans-serif")
       .style("user-select", "none")
-
+      
       const gLink = svg.append("g")
       .attr("fill", "none")
       .attr("stroke", "#555")

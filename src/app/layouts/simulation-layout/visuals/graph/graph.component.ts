@@ -11,14 +11,11 @@ import { ForceDirectedGraph } from 'src/app/layouts/simulation-layout/d3/models/
   styleUrls: ['./graph.component.css']
 })
 export class GraphComponent implements OnInit, AfterViewInit, OnChanges {
-
-  @Input('nodes') nodes;
-  @Input('links') links;
+  @Input('data') data;
+  links: Link[];
   graph: ForceDirectedGraph;
-  NODES : Node[];
-  
-
-  
+  nodes : Node[];
+    
   private _options: { width, height } = { width: 800, height: 600 };
 
   @HostListener('window:resize', ['$event'])
@@ -26,12 +23,15 @@ export class GraphComponent implements OnInit, AfterViewInit, OnChanges {
     this.graph.initSimulation(this.options);
   }
 
-  constructor(private d3Service: D3Service, private ref: ChangeDetectorRef) {}
+  constructor(private d3Service: D3Service, private ref: ChangeDetectorRef) {
+  }
 
   ngOnInit() {
    
     /** Receiving an initialized simulated graph from our custom d3 service */
-      this.graph = this.d3Service.getForceDirectedSimulation(this.NODES, this.links, this.options);
+      this.nodes = this.data.nodes;
+      this.links = this.data.links;
+      this.graph = this.d3Service.getForceDirectedSimulation(this.nodes, this.links, this.options);
       
       /** Binding change detection check on each tick
      * This along with an onPush change detection strategy should enforce checking only when relevant!
@@ -57,13 +57,12 @@ export class GraphComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnChanges() {
-    if (this.nodes)
-        this.NODES = this.nodes;
-    this.graph = this.d3Service.getForceDirectedSimulation(this.NODES, this.links, this.options);
-
+    if (this.nodes) {
+    this.graph = this.d3Service.getForceDirectedSimulation(this.nodes, this.links, this.options);
     this.graph.ticker.subscribe((d) => {
       this.ref.markForCheck();
   })
+}
 }
 
 }

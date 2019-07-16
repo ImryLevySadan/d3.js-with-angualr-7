@@ -16,17 +16,3 @@ export class NodeVisualComponent {
  
   }
   
-   // <svg:g>
-    //   <svg:text class="node-name" [attr.font-size]="node.fontSize">
-    //     <svg:tspan class="text" dx="195" dy="-30">Node id: {{node.id}}</svg:tspan>
-    //   </svg:text>
-    //   <svg:text class="node-name" [attr.font-size]="node.fontSize">
-    //     <svg:tspan class="text" dx="195" dy="-60">Node name: {{node.name}}</svg:tspan>        
-    //   </svg:text>
-    //   <svg:text class="node-name" [attr.font-size]="node.fontSize">
-    //       <svg:tspan class="text" dx="195" dy="-90">Node serial number: {{node.serialNumber}}</svg:tspan>      
-    //   </svg:text>
-    //   <svg:text class="node-name" [attr.font-size]="node.fontSize">
-    //         <svg:tspan class="text" dx="195" dy="-120">Node type: {{node.type}}</svg:tspan>      
-    //   </svg:text>
-    // <svg:g>

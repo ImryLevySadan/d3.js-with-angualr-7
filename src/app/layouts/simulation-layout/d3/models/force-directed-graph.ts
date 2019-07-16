@@ -10,7 +10,6 @@ import * as d3 from 'd3';
 //links
 //node attributes
 
-
 export class ForceDirectedGraph {
   public ticker: EventEmitter<d3.Simulation<Node, Link>> = new EventEmitter();
   public simulation: d3.Simulation<any, any>;

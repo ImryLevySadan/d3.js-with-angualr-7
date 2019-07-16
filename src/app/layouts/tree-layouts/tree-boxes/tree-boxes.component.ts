@@ -1,12 +1,11 @@
  //SOURCE: https://github.com/swayvil/d3js-tree-boxes/blob/master/src/scripts/tree-boxes.js
 
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, HostListener } from '@angular/core';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
-import {FunctionalityService} from 'src/app/services/functionality-servics.service';
+import {FunctionalityService} from 'src/app/services/functionality.service';
 import {DataLoaderService} from 'src/app/services/data-loader.service'
-
-
+import { selection } from 'd3';
 
 @Component({
   selector: 'app-tree-boxes',
@@ -14,12 +13,10 @@ import {DataLoaderService} from 'src/app/services/data-loader.service'
   styleUrls: ['./tree-boxes.component.css']
 })
 export class TreeBoxesComponent implements OnInit {
-  public d3: d3.TreeLayout<any>;
   @Input('data') data;
+  public d3: d3.TreeLayout<any>;
   root: any;
   
-
-
 constructor(private functionalityService: FunctionalityService, private dataLoaderService: DataLoaderService) {
   
 }
@@ -61,7 +58,7 @@ constructor(private functionalityService: FunctionalityService, private dataLoad
     
     let drawTree = (data) => {
       let rootNode = this.dataLoaderService.findRoot(this.data.nodes, this.data.links)
-      this.root = d3.hierarchy(rootNode[0]);
+      this.root = d3.hierarchy(rootNode);
       TreeLayout = d3.tree().size([height, width]); 
 
       // Dynamically set the height of the main svg container
@@ -80,17 +77,16 @@ constructor(private functionalityService: FunctionalityService, private dataLoad
       this.root['y0'] = 0; 
 
      
-      baseSvg = d3.select('#container').append('svg')
+     baseSvg = <any>d3.select('#container').append('svg')
       .attr('width', width + margin.right + margin.left)
       .attr('height', height + margin.top + margin.bottom)
       .attr('style', "display: block")
       .attr('style', "margin: auto")
-  
-      // Mouse wheel is desactivated, else after a first drag of the tree, wheel event drags the tree (instead of scrolling the window)
-      getMouseWheelEvent();
-      d3.select('#container').select('svg').on(mouseWheelName, null);
-      d3.select('#container').select('svg').on('dblclick.zoom', null);
-  
+      .append("g");
+
+     baseSvg.call(<any>d3.zoom()
+        .on("zoom",this.functionalityService.zoomed))
+      
       svgGroup = baseSvg.append('g')
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
@@ -314,12 +310,6 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
     return '???';
   }
 
-  // let moveToFront = (d) =>  {
-  //   return d.each(function(){
-  //       this.parentNode.appendChild(this);
-  //     });
-  // };
-
   // Enter any new links at the parent's previous position.
     // Enter any new links at the parent's previous position.
     var linkenter = link.enter().append('path')
@@ -416,28 +406,6 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
   });
 }
   
-// Zoom functionnality is desactivated (user can use browser Ctrl + mouse wheel shortcut)
-// let zoomAndDrag = () => {
-//   var scale = d3.event();
-//       // scale = 1,
-//       let translation = d3.event.translate;
-//       let tbound = -height * scale;
-//       let bbound = height * scale;
-//       let lbound = (-width + margin.right) * scale;
-//       let rbound = (width - margin.left) * scale;
-//   // limit translation to thresholds
-//   translation = [
-//       Math.max(Math.min(translation[0], rbound), lbound),
-//       Math.max(Math.min(translation[1], bbound), tbound)
-//   ];
-//   d3.select('.drawarea')
-//       .attr('transform', 'translate(' + translation + ')' +
-//             ' scale(' + scale + ')');
-// }
-
-// Toggle children on click.
-
-
 // Breadth-first traversal of the tree
 	// func function is processed on every node of a same level
 	// return the max level
@@ -471,6 +439,7 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
   }
   return 0;
   }
+
   let collision = siblings =>{
 	  var minPadding = 5;
 	  if (siblings) {
@@ -492,6 +461,7 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
 	}
 
   let getMouseWheelEvent = () => {
+    console.log("mouse event")
 		if (d3.select('#container').select('svg').on('wheel.zoom'))
 		{
 			mouseWheelName = 'wheel.zoom';

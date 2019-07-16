@@ -1,7 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Node, Link, ForceDirectedGraph } from './models';
 import * as d3 from 'd3';
-import { ForceDirectedGraphComponent } from 'src/app/layouts/force-directed-graph/force-directed-graph/force-directed-graph.component';
 
 
 @Injectable({
@@ -68,9 +67,4 @@ export class D3Service {
     const simulatedGraph = new ForceDirectedGraph(nodes, links, options);
     return simulatedGraph;
   }
-
-  // getTreeBoxes(functionalityServicsService){
-  //   const sg = new TreeBoxesComponent(functionalityServicsServiceת);
-  //   return sg;
-  // }
 }

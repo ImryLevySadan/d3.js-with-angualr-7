@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import * as d3 from 'd3';
+import {DataLoaderService} from 'src/app/services/data-loader.service'
+import {FunctionalityService} from 'src/app/services/functionality.service'
 
 @Component({
   selector: 'app-force-directed-graph',
@@ -8,14 +10,12 @@ import * as d3 from 'd3';
 })
 export class ForceDirectedGraphComponent implements OnInit {
   d3:d3.Simulation<any, any>;
-
   @Input('data') data;
       
-constructor() {}
+constructor(private dataLoaderService: DataLoaderService, private functionalityService: FunctionalityService) {}
    
   ngOnInit() {
     //NOTICE: The data structure is not hierarchy
-  
     const links = this.data.links;
     const nodes = this.data.nodes;
     let width = window.innerWidth;
@@ -32,6 +32,7 @@ constructor() {}
     const link = svg.append("g")
         .attr("stroke", "#999")
         .attr("stroke-opacity", 0.6)
+        .attr("id", "links")
       .selectAll("line")
       .data(links)
       .join("line")
@@ -40,12 +41,14 @@ constructor() {}
     let node = svg.append("g")
         .attr("stroke", "#fff")
         .attr("stroke-width", 1.5)
+        .attr("id", "links")
+        .attr("id", "nodes")
       .selectAll("circle")
       .data(nodes)
       .join("circle")
         .attr("r", 5)
-        .attr("fill", <any>this.initColor())
-        .call(<any>this.drag(simulation));
+        .attr("fill", d=> d['color'])
+        .call(<any>this.functionalityService.drag(simulation));
 
       
         simulation.on("tick", () => {
@@ -61,34 +64,5 @@ constructor() {}
         });
       
   }
-
-  initColor(){
-    const scale = d3.scaleOrdinal(d3.schemeCategory10);
-    return d => scale(d.type);
-  }
-  drag = simulation => {
-    
-      function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
-      }
-      
-      function dragged(d) {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
-      }
-      
-      function dragended(d) {
-        if (!d3.event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
-      }
-      
-      return d3.drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended);
-    }
-  
+ 
   }

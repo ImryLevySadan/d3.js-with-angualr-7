@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import * as graphData from "src/app/layouts/simulation-layout/d3/models/network-mocekd-json";
+import * as graphData from "src/app/models/network-mocekd-json";
 import * as arrayToTree from 'array-to-tree';
 
 
@@ -56,14 +56,6 @@ export class DataLoaderService {
     return data;
   }
 
-  public getConfigurationData(url: string): Observable<any> {
-    if (url) {
-    let observable = this.httpCLient.get(url)
-    .pipe(catchError(this.handleError<any>('getConfigurationData', [])));
-    return observable;
-    }
-  }
-
   public createTree(root, nodes, links) {
 
     for (let i=0; i < nodes.length; i++) {
@@ -76,8 +68,8 @@ export class DataLoaderService {
     }
   }
 }
-
-return (arrayToTree(nodes));
+let rootNode = (arrayToTree(nodes))
+return rootNode[0];
   }  
 
   public findRoot (nodes, links) {
