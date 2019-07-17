@@ -28,7 +28,7 @@ export class NetworkTopologyLayoutsComponent implements OnInit {
       case "Tree":
         this.tree = new Tree(this.data.nodes, this.data.links, this.configurationData)
         break;
-      case "Force Dircted Graph":
+      case "Force Directed Graph":
           this.forcedGraph = new ForceDirectedGraph (this.data.nodes, this.data.links, this.configurationData)
       default:
         break;

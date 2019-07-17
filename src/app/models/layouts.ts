@@ -3,8 +3,6 @@ import {DataLoaderService} from 'src/app/services/data-loader.service';
 import { HttpClient } from '@angular/common/http';
 
 
-
-
 export abstract class Layouts {
  private httpClient: HttpClient;
 
@@ -21,8 +19,7 @@ export abstract class Layouts {
     return d;
   }
 
-  protected dragcontainer = d3.drag()
-  .on("drag", function(d) {
+  protected dragContainer = d3.drag().on("drag", function(d) {
     d3.select(this).attr("transform", "translate(" + (d['x'] = d3.event.x) + "," + (d['y'] = d3.event.y) + ")");
   });
 
@@ -57,6 +54,6 @@ export abstract class Layouts {
     return g.attr('transform', 'translate(' + transform.x + ',' + transform.y + ') scale(' + transform.k + ')')
   }
 
-  protected abstract initSvg = (configurationData) =>{}
+  protected abstract initGraph = (configurationData) =>{}
 
 }

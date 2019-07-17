@@ -125,16 +125,7 @@ constructor(private dataLoaderService:DataLoaderService, private functionalitySe
       d['y0'] = d.y;
     });
   
-    }
-  
-    let collapse = (d) => {
-      if(d.children) {
-        d._children = d.children
-        d._children.forEach(collapse)
-        d.children = null
-     };
-    }
-   
+    }   
   
       let diagonal = (s, d) => {
     

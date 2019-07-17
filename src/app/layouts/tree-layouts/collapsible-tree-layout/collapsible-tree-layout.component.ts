@@ -61,9 +61,7 @@ constructor(private dataLoaderService:DataLoaderService, private functionalitySe
     let treeData = TreeLayout(root);
     const nodes = root.descendants().reverse();
     const links = root.links();
-    // let nodes = treeData.descendants();
-    // let links = treeData.descendants().slice(1);
-    
+        
     // Compute the new tree layout.
 
 

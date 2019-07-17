@@ -41,15 +41,6 @@ d3:d3.Simulation<any, any>;
         .data(nodes)
         .join('g');
 
-        // let rect = node.append('rect')
-        // .attr("width", 120)
-        // .attr("height", 45)
-        // .attr("fill", "white")
-        // .attr("stroke", "#000")
-        // .attr("stroke-width", "2px")
-        // .attr("x", 0)
-        // .attr("y", 0)
-
         let text = node.append("text")
         .text(d=> d['label'])
 
