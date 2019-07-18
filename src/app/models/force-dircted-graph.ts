@@ -31,7 +31,7 @@ export class ForceDirectedGraph extends Layouts{
   this.svg = new SvgStyling(this, configurationData);
   this.svg.initSvg(this.simulation);
   
-  let x = this.simulation.on("tick", () => {
+  this.simulation.on("tick", () => {
         this.svg.link
             .attr("x1", d => d['source']['x'])
             .attr("y1", d => d['source']['y'])

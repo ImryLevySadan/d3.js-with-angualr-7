@@ -11,7 +11,6 @@ import {FunctionalityService} from 'src/app/services/functionality.service';
 })
 export class VerticalTreeComponent implements OnInit {
   @Input('data') data;
-
 d3: d3.TreeLayout<any>;
 duration:number = 750;
 i: number = 0;

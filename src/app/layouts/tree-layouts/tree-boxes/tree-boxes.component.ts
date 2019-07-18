@@ -1,4 +1,4 @@
- //SOURCE: https://github.com/swayvil/d3js-tree-boxes/blob/master/src/scripts/tree-boxes.js
+//SOURCE: https://github.com/swayvil/d3js-tree-boxes/blob/master/src/scripts/tree-boxes.js
 
 import { Component, OnInit, Input, HostListener } from '@angular/core';
 import * as d3 from 'd3';

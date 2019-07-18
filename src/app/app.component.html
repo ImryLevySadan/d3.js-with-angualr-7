@@ -1,5 +1,5 @@
 <h1>Network Topologies</h1>
-  <label *ngIf="!url">Choose tour layout</label>
+  <label *ngIf="!url">Layout List</label>
   <form *ngIf="!url">
   <select (change)="onSelect($event)">
     <option *ngFor="let netWorkTopology of netWorkTopologies">
@@ -8,7 +8,6 @@
   </select>
 </form>
 
-
 <graph [data]="networkData" *ngIf="simulation"></graph>
 <app-force-directed-graph [data]="networkData" *ngIf="forceDirected"></app-force-directed-graph>
 <app-force-dircted-tree [data]="networkData" *ngIf="forceDirectedTree"></app-force-dircted-tree>
@@ -16,4 +15,4 @@
 <app-vertical-tree [data]="networkData" *ngIf="vertical"></app-vertical-tree>
 <app-tidy-tree [data]="networkData" *ngIf="tidyTree"></app-tidy-tree>
 <app-tree-boxes [data]="networkData" *ngIf="treeBox"></app-tree-boxes>
-<app-network-topology-layouts [data]="networkData" [configurationData]="configurationData" *ngIf="networkLayout"></app-network-topology-layouts>
+<app-network-topology-layouts [data]="networkData" [configurationData] = "configurationData" *ngIf="layoutChosen"></app-network-topology-layouts>

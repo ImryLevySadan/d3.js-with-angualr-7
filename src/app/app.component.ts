@@ -7,7 +7,7 @@ import {DataLoaderService}  from '../app/services/data-loader.service';
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent implements OnInit {
+export class AppComponent {
   forceDirected: boolean = false;
   forceDirectedTree: boolean = false;
   collapsiable: boolean = false;
@@ -17,19 +17,16 @@ export class AppComponent implements OnInit {
   tidyTree: boolean = false;
   networkLayout: boolean = false;
   treeBox: boolean = false;  
-  netWorkTopologies: string [] = ['Force dircted Simulation', "Force directed graph", "Force directed tree", "Collapsiable Tree", "Vertical tree", "Tree box", "Tidy Tree", "Network Topolgy Layouts"];
+  layoutChosen: boolean = false;
+  netWorkTopologies: string [] = ['Choose layout', 'Force dircted Simulation', "Force directed graph", "Force directed tree", "Collapsiable Tree", "Vertical tree", "Tree box", "Tidy Tree", "Tree", "Force Directed Graph2"];
   networkData: any;
   url: string;
-  configurationData = {layout: "Force Directed Graph", linkStyling: "direct", height: window.innerHeight, width: window.innerWidth}
- 
+  configurationData = {layout: "", linkStyling: "direct", height: window.innerHeight, width: window.innerWidth}
 
+ 
   constructor(private dataLoader: DataLoaderService) {}
 
-  ngOnInit () {
-   
-    }
-
-  onSelect(event){
+    onSelect(event){
    let value = event.target.value;
     switch (value) {
         case "Force dircted Simulation":
@@ -44,6 +41,7 @@ export class AppComponent implements OnInit {
             this.tidyTree = false;
             this.treeBox = false;
             this.networkLayout = false;
+            this.layoutChosen = false;
             break;
         case "Force directed graph":
           this.networkData = null;
@@ -57,6 +55,7 @@ export class AppComponent implements OnInit {
           this.vertical = false;
           this.treeBox = false;
           this.networkLayout = false;
+          this.layoutChosen = false;
                 break;
             case "Force directed tree":
               this.networkData = null;
@@ -69,7 +68,7 @@ export class AppComponent implements OnInit {
               this.vertical = false;
               this.treeBox = false;
               this.networkLayout = false;
-
+              this.layoutChosen = false;
                     break;
           case "Collapsiable Tree":
             this.networkData = null;
@@ -83,6 +82,7 @@ export class AppComponent implements OnInit {
             this.vertical = false;
             this.treeBox = false;
             this.networkLayout = false;
+            this.layoutChosen = false;
               break;
               case "Tidy Tree":
                 this.networkData = null;
@@ -97,6 +97,7 @@ export class AppComponent implements OnInit {
                 this.treeBox = false;
                 this.tidyTree = true;
                 this.networkLayout = false;
+                this.layoutChosen = false;
                   break;
           case "Vertical tree":
             this.networkData = null;
@@ -110,7 +111,7 @@ export class AppComponent implements OnInit {
             this.vertical = true;
             this.treeBox = false;
             this.networkLayout = false;
-
+            this.layoutChosen = false;
               break;
           case "Tree box":
               this.networkData = null;
@@ -124,21 +125,37 @@ export class AppComponent implements OnInit {
               this.vertical = false;
               this.treeBox = true;
               this.networkLayout = false;
-
+              this.layoutChosen = false;
               break;
-          case "Network Topolgy Layouts":
-              this.networkData = null;
-              this.networkData = this.dataLoader.getJson();
-              this.forceDirected = false;
-              this.forceDirectedTree = false;
-              this.collapsiable = false;
-              this.tidyTree = false;
-              this.collapsiableTree = false;
-              this.simulation = false;
-              this.vertical = false;
-              this.treeBox = false;
-              this.networkLayout = true;
-
+          case "Tree": 
+          this.forceDirected = false;
+          this.forceDirectedTree = false;
+          this.collapsiable = false;
+          this.tidyTree = false;
+          this.collapsiableTree = false;
+          this.simulation = false;
+          this.vertical = false;
+          this.treeBox = false;
+          this.layoutChosen = false;
+          this.networkData = null;
+          this.networkData = this.dataLoader.getJson();
+          this.configurationData.layout = "Tree";
+          this.layoutChosen = true;
+              break;
+          case "Force Directed Graph2": 
+          this.forceDirected = false;
+          this.forceDirectedTree = false;
+          this.collapsiable = false;
+          this.tidyTree = false;
+          this.collapsiableTree = false;
+          this.simulation = false;
+          this.vertical = false;
+          this.treeBox = false;
+          this.networkData = null;
+          this.layoutChosen = false;
+          this.networkData = this.dataLoader.getJson();
+          this.configurationData.layout = "Force Directed Graph";
+          this.layoutChosen = true;
               break;
               
         }
