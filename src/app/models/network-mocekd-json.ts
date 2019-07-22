@@ -142,42 +142,42 @@ export const NODES1: Node[] = [
         {
             "source": "1",
             "target": "5",
-            "status": ""
+            "status": "Working"
         },
         {
             "source": "2",
             "target": "5",
-            "status": ""
+            "status": "Sync"
         },
         {
             "source": "3",
             "target": "5",
-            "status": ""
+            "status": "Async"
         },
         {
             "source": "4",
             "target": "6",
-            "status": ""
+            "status": "Communication Problem"
         },
         {
             "source": "5",
             "target": "6",
-            "status": ""
+            "status": "Working"
         },
         {
             "source": "6",
             "target": "7",
-            "status": ""
+            "status": "Connection Failed"
         },
         {
             "source": "7",
             "target": "8",
-            "status": ""
+            "status": "Working"
         },
         {
             "source": "8",
             "target": "9",
-            "status": ""
+            "status": "Working"
         },
     ]
 
@@ -301,62 +301,62 @@ export const NODES1: Node[] = [
             {
                 "source": "1",
                 "target": "5",
-                "status": "SYNC"
+                "status": "Working"
             },
             {
                 "source": "2",
                 "target": "6",
-                "status": "ASYN"
+                "status": "Does not work"
 
             },
             {
                 "source": "3",
                 "target": "7",
-                "status": "SYNC"
+                "status": "Working"
             },
             {
                 "source": "4",
                 "target": "8",
-                "status": "SYNC"
+                "status": "Working"
             },
             {
                 "source": "5",
                 "target": "9",
-                "status": "ASYN"
+                "status": "Does not work"
             },
             {
                 "source": "6",
                 "target": "9",
-                "status": "ASYN"
+                "status": "Does not work"
             },
             {
                 "source": "7",
                 "target": "10",
-                "status": "ASYN"
+                "status": "Does not work"
             },
             {
                 "source": "8",
                 "target": "10",
-                "status": "SYNC"
+                "status": "Working"
             },
             {
                 "source": "10",
                 "target": "11",
-                "status": "ASYN"
+                "status": "Working"
             },
             {
                 "source": "9",
                 "target": "12",
-                "status": "SYNC"
+                "status": "Working"
             },
             {
                 "source": "11",
                 "target": "12",
-                "status": "SYNC"
+                "status": "Working"
             },
             {
                 "source": "12",
                 "target": "13",
-                "status": "ASYN"
+                "status": "Does not work"
             },
         ]

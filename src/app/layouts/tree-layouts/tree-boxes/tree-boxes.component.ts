@@ -5,7 +5,6 @@ import * as d3 from 'd3';
 import * as $ from 'jquery';
 import {FunctionalityService} from 'src/app/services/functionality.service';
 import {DataLoaderService} from 'src/app/services/data-loader.service'
-import { selection } from 'd3';
 
 @Component({
   selector: 'app-tree-boxes',
@@ -287,9 +286,7 @@ var nodeEnterTooltip = nodesTooltip.enter().append('g')
   var link = linkGroup.selectAll('path').data(links, function(d) {
     return d;
   });
-  var linkTooltip = linkGroupToolTip.selectAll('g').data(links, function(d) {
-    return d['id'];
-  });
+  var linkTooltip = linkGroupToolTip.selectAll('g').data(links);
 
   function linkMarkerStart(status, isSelected) {
     if (status == 'SYNC')

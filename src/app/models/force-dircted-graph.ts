@@ -22,15 +22,16 @@ export class ForceDirectedGraph extends Layouts{
   }
 
    initGraph =(configurationData) => { 
-    
+    //Calculate the force layout
   this.simulation = d3.forceSimulation(<any>this.nodes)
   .force("link", d3.forceLink(this.links).id(d => d['id']))
   .force("charge", d3.forceManyBody().strength(-750))
-  .force("center", d3.forceCenter(configurationData.width / 2, configurationData.height / 2))
+  .force("center", d3.forceCenter(configurationData.width / 2, configurationData.height / 2));
+
 
   this.svg = new SvgStyling(this, configurationData);
   this.svg.initSvg(this.simulation);
-  
+
   this.simulation.on("tick", () => {
         this.svg.link
             .attr("x1", d => d['source']['x'])
@@ -40,6 +41,7 @@ export class ForceDirectedGraph extends Layouts{
     
         this.svg.node
             .attr("transform", d => this.svg.nodePosition(d));
-              });
- }
+
+        });
+  }
 }
