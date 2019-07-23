@@ -1,7 +1,7 @@
 import { Component, Input, ChangeDetectorRef, HostListener, ChangeDetectionStrategy, OnInit, AfterViewInit, OnChanges } from '@angular/core';
 import { D3Service} from 'src/app/layouts/simulation-layout/d3/d3.service';
-import { Link } from 'src/app/models/link';
-import { Node } from 'src/app/models//node';
+import { Link } from 'src/app/network-topology/models/link';
+import { Node } from 'src/app/network-topology/models/node';
 import { ForceDirectedGraph } from 'src/app/layouts/simulation-layout/d3/models/force-directed-graph';
 
 @Component({

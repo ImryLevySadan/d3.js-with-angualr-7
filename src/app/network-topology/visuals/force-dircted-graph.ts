@@ -1,8 +1,8 @@
-import { Link } from 'src/app/models/link';
-import { Node } from 'src/app/models//node';
+import { Link } from '../models/link';
+import { Node } from '../models/node';
 import * as d3 from 'd3';
-import { Layouts } from './layouts';
-import {SvgStyling} from './svgStyling';
+import { Layouts } from '../layouts-layer/layouts';
+import {SvgStyling} from '../layouts-layer/svgStyling';
 
 
 export class ForceDirectedGraph extends Layouts{
@@ -43,5 +43,6 @@ export class ForceDirectedGraph extends Layouts{
             .attr("transform", d => this.svg.nodePosition(d));
 
         });
+
   }
 }

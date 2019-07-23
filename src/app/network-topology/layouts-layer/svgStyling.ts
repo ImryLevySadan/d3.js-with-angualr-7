@@ -1,21 +1,23 @@
-import { Link } from './link';
-import { Node } from './node';
+import { Link } from '../models/link';
+import { Node } from '../models/node';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 
-
 export class SvgStyling {
 d3:d3.Simulation<any, any>;
-configurationData: any;
 nodes: Node[];
 links: Link[];
+
+configurationData: any;
 svg: any;
 node: any;
 link: any;
 linkToolTip: any;
+
 drag: any;
 dragContainer: any
 zoomed: any;
+
 clickCoordiante: [number, number] = [0, 0];
 //This property set the rectangle element size, which also affect other calculation (like links position)
 rectSizes = { width : 50, height : 20, textMargin : 5 };
@@ -31,8 +33,7 @@ this.zoomed = layout.zoomed;
     
 }
     initSvg = (simulation) => {
-    let rectSizes = this.rectSizes;
-
+     let rectSizes = this.rectSizes;
      let width = this.configurationData.width;
      let height = this.configurationData.height;
     
@@ -57,7 +58,7 @@ this.zoomed = layout.zoomed;
           let linkType = ((this.configurationData.layout == "Tree") ? "path": "line")
 
   //This variable will allow the Jquery attr() function to call LinkToolTipPosition function
-  let linkToolTipPosition = this.LinkToolTipPosition;
+    let linkToolTipPosition = this.LinkToolTipPosition;
     this.link = this.svg.append("g")
     .attr("fill", "none")
     .attr("stroke", "lightsteelblue")
@@ -78,7 +79,6 @@ this.zoomed = layout.zoomed;
           d['target']['data']? $('#linkLabel' + d['target']['data']['id']).css('visibility', 'hidden'): $('#linkLabel' + d['target']['id']).css('visibility', 'hidden')})
           
           .on('click', function(d) {
-            console.log(d3.mouse(this))
              this.clickCoordiante =  d3.mouse(this);
             d['target']['data']? $('#linkLabel' + d['target']['data']['id']).css('visibility', 'visible'): $('#linkLabel' + d['target']['id']).css('visibility', 'visible');
           })
@@ -106,7 +106,7 @@ this.zoomed = layout.zoomed;
         .data(this.nodes)
         .join('g')
         //"Call" is set to different "drag" functions, according to the layout
-        .call(this.configurationData.layout== "Force Directed Graph"? this.drag(simulation): this.drag)
+        .call(this.configurationData.layout== "Force"? this.drag(simulation): this.drag)
 
         let rect = this.node.append('rect')
         .attr('rx', rectSizes.height - 5)
@@ -134,7 +134,6 @@ this.zoomed = layout.zoomed;
 
         this.node.append("title")
        .text(d=> "Serial Number:" +  (d['data']? d['data']['serialNumber']: d['serialNumber']));
-
     }
 
     //set Nodes positions
@@ -145,7 +144,7 @@ this.zoomed = layout.zoomed;
         case "Tree":
           path = `translate(${d['y']},${d['x']})`;
           return path;
-        case "Force Directed Graph":
+        case "Force":
           path = `translate(${d['x'] - this.rectSizes.width/3},${d['y'] - this.rectSizes.height/2})`;
           return path;
         default:
@@ -161,28 +160,27 @@ this.zoomed = layout.zoomed;
   // "+12" set the "y" property, so  the link will end on the middle of the left "x" of the rectangle (and not above it )
   .y(d=> d['x'] + this.rectSizes.height /2);
     }
-
-      LinkToolTipPosition = (d, clickCoordiante) => {
         //Calculate the link tool tip position according to the mouseover event coordinate
+    LinkToolTipPosition = (d, clickCoordinate) => {
         
         //Calculate link tool tip position for node with more than 1 children
         if((d['source']['data'] && (d['source']['data']['children'].length>1)))
         {
         return "translate(" +
-                  clickCoordiante[0] + 50 + "," + 
-                  (clickCoordiante[1]) + ")"
+                  clickCoordinate[0] + 50 + "," + 
+                  (clickCoordinate[1]) + ")"
                 }
       //Calculate link tool tip position for node with only 1 children
       if  ((d['source']['data'])){
         return "translate(" +
-        (clickCoordiante[0] - this.rectSizes.height) + "," + 
-        ((clickCoordiante[1]) + this.rectSizes.height) + ")"
+        (clickCoordinate[0] - this.rectSizes.height) + "," + 
+        ((clickCoordinate[1]) + this.rectSizes.height) + ")"
       }
     //Calculate link tool tip position for force layout
     else {
       return "translate(" +
-      (clickCoordiante[0] + 30) + "," + 
-      ((clickCoordiante[1]) + 30) + ")"
+      (clickCoordinate[0] + 30) + "," + 
+      ((clickCoordinate[1]) + 30) + ")"
     }
     }  
     

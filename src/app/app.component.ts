@@ -18,10 +18,10 @@ export class AppComponent {
   networkLayout: boolean = false;
   treeBox: boolean = false;  
   layoutChosen: boolean = false;
-  netWorkTopologies: string [] = ['Choose layout', 'Force dircted Simulation', "Force directed graph", "Force directed tree", "Collapsiable Tree", "Vertical tree", "Tree box", "Tidy Tree", "Tree", "Force Directed Graph2"];
+  netWorkTopologies: string [] = ['Choose layout', 'Force dircted Simulation', "Force directed graph", "Force directed tree", "Collapsiable Tree", "Vertical tree", "Tree box", "Tidy Tree", "network-topology"];
   networkData: any;
   url: string;
-  configurationData = {layout: "", linkStyling: "direct", height: window.innerHeight, width: window.innerWidth}
+  configurationData = {layout: "Force", linkStyling: "direct", height: window.innerHeight, width: window.innerWidth}
 
  
   constructor(private dataLoader: DataLoaderService) {}
@@ -127,7 +127,7 @@ export class AppComponent {
               this.networkLayout = false;
               this.layoutChosen = false;
               break;
-          case "Tree": 
+          case "network-topology": 
           this.forceDirected = false;
           this.forceDirectedTree = false;
           this.collapsiable = false;
@@ -139,22 +139,6 @@ export class AppComponent {
           this.layoutChosen = false;
           this.networkData = null;
           this.networkData = this.dataLoader.getJson();
-          this.configurationData.layout = "Tree";
-          this.layoutChosen = true;
-              break;
-          case "Force Directed Graph2": 
-          this.forceDirected = false;
-          this.forceDirectedTree = false;
-          this.collapsiable = false;
-          this.tidyTree = false;
-          this.collapsiableTree = false;
-          this.simulation = false;
-          this.vertical = false;
-          this.treeBox = false;
-          this.networkData = null;
-          this.layoutChosen = false;
-          this.networkData = this.dataLoader.getJson();
-          this.configurationData.layout = "Force Directed Graph";
           this.layoutChosen = true;
               break;
               

@@ -15,4 +15,4 @@
 <app-vertical-tree [data]="networkData" *ngIf="vertical"></app-vertical-tree>
 <app-tidy-tree [data]="networkData" *ngIf="tidyTree"></app-tidy-tree>
 <app-tree-boxes [data]="networkData" *ngIf="treeBox"></app-tree-boxes>
-<app-network-topology-layouts [data]="networkData" [configurationData] = "configurationData" *ngIf="layoutChosen"></app-network-topology-layouts>
+<app-network-topology-layouts [data]="networkData" [configurationData]="configurationData" *ngIf="layoutChosen"></app-network-topology-layouts>

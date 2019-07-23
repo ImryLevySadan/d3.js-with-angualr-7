@@ -1,13 +1,8 @@
 import * as d3 from 'd3';
-import {DataLoaderService} from 'src/app/services/data-loader.service';
-import { HttpClient } from '@angular/common/http';
-
 
 export abstract class Layouts {
- private httpClient: HttpClient;
 
- protected dataLoaderService:DataLoaderService = new DataLoaderService(this.httpClient);
-    
+  //This methode will part of collapsiable graphs, Should this feature will be added to this project   
   protected click = (d) => {
     if (d.children) {
       d._children = d.children;

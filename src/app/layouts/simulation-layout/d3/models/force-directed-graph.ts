@@ -1,6 +1,6 @@
 import { EventEmitter } from '@angular/core';
-import { Link } from 'src/app/models/link';
-import { Node } from 'src/app/models//node';
+import { Link } from 'src/app/network-topology/models/link';
+import { Node } from 'src/app/network-topology/models/node';
 import * as d3 from 'd3';
 
 // To create a force directed graph you will need:

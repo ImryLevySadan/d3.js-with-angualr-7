@@ -1,5 +1,5 @@
-import { Node } from 'src/app/models/node';
-import { Link } from 'src/app/models/link';
+import { Node } from './node';
+import { Link } from './link';
 
 export const NODES: Node[] = [
 

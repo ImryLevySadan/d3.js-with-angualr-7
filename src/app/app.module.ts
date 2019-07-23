@@ -15,8 +15,10 @@ import { CollapsibleTreeLayoutComponent } from './layouts/tree-layouts/collapsib
 import { ForceDirctedTreeComponent } from './layouts/force-directed-graph/force-dircted-tree/force-dircted-tree.component';
 import { VerticalTreeComponent } from './layouts/tree-layouts/vertical-tree/vertical-tree.component';
 import { TreeBoxesComponent } from './layouts/tree-layouts/tree-boxes/tree-boxes.component';
-import { NetworkTopologyLayoutsComponent } from './network-topology-layouts/network-topology-layouts.component';
+import { NetworkTopologyLayoutsComponent } from "./network-topology/network-topology-layouts/NetworkTopologyLayoutsComponent";
 import {TidyTreeComponent} from './layouts/tree-layouts/tidy-tree/tidy-tree.component';
+import { TreeComponent } from './network-topology/display/tree/tree.component';
+import { ForceComponent } from './network-topology/display/force/force.component';
 
 
 @NgModule({
@@ -34,7 +36,9 @@ import {TidyTreeComponent} from './layouts/tree-layouts/tidy-tree/tidy-tree.comp
     VerticalTreeComponent,
     TidyTreeComponent,
     TreeBoxesComponent,
-    NetworkTopologyLayoutsComponent        
+    NetworkTopologyLayoutsComponent,
+    TreeComponent,
+    ForceComponent        
   ],
   imports: [
     BrowserModule,

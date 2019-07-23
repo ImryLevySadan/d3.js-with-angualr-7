@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import * as graphData from "src/app/models/network-mocekd-json";
+import * as graphData from "src/app/network-topology/models/network-mocekd-json";
 import * as arrayToTree from 'array-to-tree';
 
 
@@ -56,29 +56,17 @@ export class DataLoaderService {
     return data;
   }
 
-  public createTree(root, nodes, links) {
-
-    for (let i=0; i < nodes.length; i++) {
-      for (let j=0; j < links.length; j++){
-        if (nodes[i].id == links[j].source) {
-          for (let z=0; z < nodes.length; z++){
-            if (nodes[z].id == links[j].target)
-            nodes[i].parent_id = nodes[z].id;
-          }
-    }
-  }
-}
-let rootNode = (arrayToTree(nodes))
-return rootNode[0];
-  }  
-
-  public findRoot (nodes, links) {
+    //The next two function are responsible to converting the data from a nodes-links double flat arrays into hierachical stucture
+    //I used them because this project handle both data types. 
+   //"findroot" gets the nodes and links data and find the root node. 
+   //Then, it calls "createTree" which transform this node into a tree object 
+  findRoot (nodes, links) {
     let rootNode;
     var isRoot = true;
     for (let i=0; i < nodes.length; i++){
       isRoot = true;
     for (let j=0; j < links.length; j++){
-        if (nodes[i].id == links[j].source){
+        if (links[j].source.id? nodes[i].id == links[j].source.id: nodes[i].id == links[j].source){
         isRoot = false;
         break;
     }
@@ -89,6 +77,19 @@ return rootNode[0];
              }
         } 
     }
+   createTree(root, nodes, links) {
+
+    for (let i=0; i < nodes.length; i++) {
+      for (let j=0; j < links.length; j++){
+        if (links[j].source.id? nodes[i].id == links[j].source.id: nodes[i].id == links[j].source){
+          nodes[i].parent_id = links[j].target.id? links[j].target.id: links[j].target
+        }
+    }
+}
+let rootNode = (arrayToTree(nodes))
+return rootNode[0];
+  }  
+
 
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any) => {
