@@ -5,8 +5,6 @@ import * as d3 from "d3";
 import {DataLoaderService} from 'src/app/services/data-loader.service';
 import {FunctionalityService} from 'src/app/services/functionality.service';
 
-
-
 @Component({
   selector: 'app-collapsible-tree-layout',
   templateUrl: './collapsible-tree-layout.component.html',

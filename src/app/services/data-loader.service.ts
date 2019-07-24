@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import * as graphData from "src/app/network-topology/models/network-mocekd-json";
+import * as graphData from "../models/network-mocekd-json";
 import * as arrayToTree from 'array-to-tree';
 
 

@@ -1,6 +1,0 @@
-<button type="button" (click)="changeLayout('Tree')">Tree</button>
-<button type="button" (click)="changeLayout('Force')">Force Directed Graph</button>
-
-
-<app-force *ngIf="isForce" [configurationData]="configurationData" [data]="data"></app-force>
-<app-tree *ngIf="isTree" [configurationData]="configurationData" [data]="data"></app-tree>

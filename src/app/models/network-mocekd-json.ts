@@ -291,10 +291,10 @@ export const NODES1: Node[] = [
             "id": "13", 
             "label":"Tel Aviv",
             "serialNumber": "1300",
-            "type": "www",
+            "type": "router",
             "iconPath": "",
             "color": ""
-        }
+        }        
         ]
         
         export const LINKS2: Link[] = [

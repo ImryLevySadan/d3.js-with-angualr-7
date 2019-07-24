@@ -12,13 +12,11 @@ export class AppComponent {
   forceDirectedTree: boolean = false;
   collapsiable: boolean = false;
   collapsiableTree: boolean = false;
-  simulation: boolean = false;
   vertical: boolean = false;
   tidyTree: boolean = false;
-  networkLayout: boolean = false;
   treeBox: boolean = false;  
   layoutChosen: boolean = false;
-  netWorkTopologies: string [] = ['Choose layout', 'Force dircted Simulation', "Force directed graph", "Force directed tree", "Collapsiable Tree", "Vertical tree", "Tree box", "Tidy Tree", "network-topology"];
+  netWorkTopologies: string [] = ['Choose layout', "Force directed graph", "Force directed tree", "Collapsiable Tree", "Vertical tree", "Tree box", "Tidy Tree"];
   networkData: any;
   url: string;
   configurationData = {layout: "Force", linkStyling: "direct", height: window.innerHeight, width: window.innerWidth}
@@ -29,21 +27,7 @@ export class AppComponent {
     onSelect(event){
    let value = event.target.value;
     switch (value) {
-        case "Force dircted Simulation":
-            this.networkData = null;
-            this.networkData = this.dataLoader.getJson();
-            this.simulation = true;
-            this.forceDirected = false;
-            this.forceDirectedTree = false;
-            this.collapsiable = false;
-            this.collapsiableTree = false;
-            this.vertical = false;
-            this.tidyTree = false;
-            this.treeBox = false;
-            this.networkLayout = false;
-            this.layoutChosen = false;
-            break;
-        case "Force directed graph":
+       case "Force directed graph":
           this.networkData = null;
           this.networkData = this.dataLoader.getJson();
           this.forceDirected = true;
@@ -51,10 +35,8 @@ export class AppComponent {
           this.tidyTree = false;
           this.collapsiable = false;
           this.collapsiableTree = false;
-          this.simulation = false;
           this.vertical = false;
           this.treeBox = false;
-          this.networkLayout = false;
           this.layoutChosen = false;
                 break;
             case "Force directed tree":
@@ -64,10 +46,8 @@ export class AppComponent {
               this.forceDirectedTree = true;
               this.collapsiable = false;
               this.collapsiableTree = false;
-              this.simulation = false;
               this.vertical = false;
               this.treeBox = false;
-              this.networkLayout = false;
               this.layoutChosen = false;
                     break;
           case "Collapsiable Tree":
@@ -78,10 +58,8 @@ export class AppComponent {
             this.collapsiable = false;
             this.tidyTree = false;
             this.collapsiableTree = true;
-            this.simulation = false;
             this.vertical = false;
             this.treeBox = false;
-            this.networkLayout = false;
             this.layoutChosen = false;
               break;
               case "Tidy Tree":
@@ -91,12 +69,10 @@ export class AppComponent {
                 this.forceDirectedTree = false;
                 this.collapsiable = false;
                 this.collapsiableTree = false;
-                this.simulation = false;
                 this.tidyTree = false;
                 this.vertical = false;
                 this.treeBox = false;
                 this.tidyTree = true;
-                this.networkLayout = false;
                 this.layoutChosen = false;
                   break;
           case "Vertical tree":
@@ -107,10 +83,8 @@ export class AppComponent {
             this.collapsiable = false;
             this.collapsiableTree = false;
             this.tidyTree = false;
-            this.simulation = false;
             this.vertical = true;
             this.treeBox = false;
-            this.networkLayout = false;
             this.layoutChosen = false;
               break;
           case "Tree box":
@@ -121,27 +95,11 @@ export class AppComponent {
               this.collapsiable = false;
               this.tidyTree = false;
               this.collapsiableTree = false;
-              this.simulation = false;
               this.vertical = false;
               this.treeBox = true;
-              this.networkLayout = false;
               this.layoutChosen = false;
               break;
-          case "network-topology": 
-          this.forceDirected = false;
-          this.forceDirectedTree = false;
-          this.collapsiable = false;
-          this.tidyTree = false;
-          this.collapsiableTree = false;
-          this.simulation = false;
-          this.vertical = false;
-          this.treeBox = false;
-          this.layoutChosen = false;
-          this.networkData = null;
-          this.networkData = this.dataLoader.getJson();
-          this.layoutChosen = true;
-              break;
-              
+
         }
     } 
 }
