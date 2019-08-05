@@ -7,7 +7,9 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "deploy": "ng b --prod --base-href https://ImryLevySadan.github.io/d3.js-with-angualr-7/ && npx ngh --dir=dist/d3.js-with-angualr-7"
+
   },
   "private": true,
   "dependencies": {
