@@ -33,19 +33,19 @@ export class DataLoaderService {
       let purple = '#9467bd';
       switch (value) {
         case "access-point": 
-        node.iconPath = "/assets/icon-images/access-point.png";
+        node.iconPath = "./assets/icon-images/access-point.png";
         node.color = green;
         break;
         case "router": 
-        node.iconPath = "/assets/icon-images/router.png";
+        node.iconPath = "./assets/icon-images/router.png";
         node.color = blue;
         break;
         case "switch": 
-        node.iconPath = "/assets/icon-images/switch.png";
+        node.iconPath = "./assets/icon-images/switch.png";
         node.color = yellow
         break;
         case "www": 
-        node.iconPath = "/assets/icon-images/www.png";
+        node.iconPath = "./assets/icon-images/www.png";
         node.color = purple;
         break;
         default:
