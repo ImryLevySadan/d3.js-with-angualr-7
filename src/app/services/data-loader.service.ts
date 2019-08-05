@@ -33,19 +33,19 @@ export class DataLoaderService {
       let purple = '#9467bd';
       switch (value) {
         case "access-point": 
-        node.iconPath = "https://github.com/ImryLevySadan/d3.js-with-angualr-7/tree/master/src/assets/icon-images/access-point.png";
+        node.iconPath = "./assets/icon-images/access-point.png";
         node.color = green;
         break;
         case "router": 
-        node.iconPath = "https://github.com/ImryLevySadan/d3.js-with-angualr-7/tree/master/src/assets/icon-images/icon-images/router.png";
+        node.iconPath = "./assets/icon-images/router.png";
         node.color = blue;
         break;
         case "switch": 
-        node.iconPath = "https://github.com/ImryLevySadan/d3.js-with-angualr-7/tree/master/src/assets/icon-images/switch.png";
+        node.iconPath = "./assets/icon-images/switch.png";
         node.color = yellow
         break;
         case "www": 
-        node.iconPath = "https://github.com/ImryLevySadan/d3.js-with-angualr-7/tree/master/src/assets/icon-images/www.png";
+        node.iconPath = "./assets/icon-images/www.png";
         node.color = purple;
         break;
         default:
