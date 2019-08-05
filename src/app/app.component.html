@@ -1,3 +1,4 @@
+<div>
 <h1>Network Topologies</h1>
   <label *ngIf="!url">Layout List</label>
   <form *ngIf="!url">
@@ -7,10 +8,13 @@
     </option>
   </select>
 </form>
+</div>
 
+<div>
 <app-force-directed-graph [data]="networkData" *ngIf="forceDirected"></app-force-directed-graph>
 <app-force-dircted-tree [data]="networkData" *ngIf="forceDirectedTree"></app-force-dircted-tree>
 <app-collapsible-tree-layout  [data]="networkData" *ngIf="collapsiableTree"></app-collapsible-tree-layout>
 <app-vertical-tree [data]="networkData" *ngIf="vertical"></app-vertical-tree>
 <app-tidy-tree [data]="networkData" *ngIf="tidyTree"></app-tidy-tree>
 <app-tree-boxes [data]="networkData" *ngIf="treeBox"></app-tree-boxes>
+</div>

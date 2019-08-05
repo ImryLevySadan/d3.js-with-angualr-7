@@ -13,7 +13,7 @@ import {DataLoaderService} from 'src/app/services/data-loader.service'
 })
 export class TreeBoxesComponent implements OnInit {
   @Input('data') data;
-  public d3: d3.TreeLayout<any>;
+   d3: d3.TreeLayout<any>;
   root: any;
   
 constructor(private functionalityService: FunctionalityService, private dataLoaderService: DataLoaderService) {

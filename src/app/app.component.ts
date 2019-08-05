@@ -16,7 +16,7 @@ export class AppComponent {
   tidyTree: boolean = false;
   treeBox: boolean = false;  
   layoutChosen: boolean = false;
-  netWorkTopologies: string [] = ['Choose layout', "Force directed graph", "Force directed tree", "Collapsiable Tree", "Vertical tree", "Tree box", "Tidy Tree"];
+  netWorkTopologies: string [] = ['Choose layout', "Force directed graph", "Force directed tree", "Collapsiable Tree", "Vertical collapsiable tree", "Tree box", "Tidy Tree"];
   networkData: any;
   url: string;
   configurationData = {layout: "Force", linkStyling: "direct", height: window.innerHeight, width: window.innerWidth}
@@ -75,7 +75,7 @@ export class AppComponent {
                 this.tidyTree = true;
                 this.layoutChosen = false;
                   break;
-          case "Vertical tree":
+          case "Vertical collapsiable tree":
             this.networkData = null;
             this.networkData = this.dataLoader.getJson();
             this.forceDirected = false;
